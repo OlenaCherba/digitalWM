@@ -1,0 +1,15 @@
+extends layout.pug
+
+block title
+    title Test
+
+block content
+    p Hey there!On this web-page you can take out your digital watermark from image:)
+        form(action="/enctcode" method="post" enctype = "multipart/form-data")
+            div(class = "form-group")
+                input(type = "text" name="messages" size="40")
+            div(class = "form-group")
+                input(type = "file" name ="upload")
+            div(class = "form-group")
+                input(type = "submit" name = "submit" value="Submit")
+

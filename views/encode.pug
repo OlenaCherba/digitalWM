@@ -1,0 +1,34 @@
+extends layout.pug
+
+block title
+    title Test
+block content
+    div(class="container")
+        p Внесите данные для внедрения ЦВЗ:)
+    div(class="container")
+        form(action=" " method="post" enctype = "multipart/form-data")
+            div(class="row")
+                div(class="col-md-6")
+                    p Введите текст для внедрения и загрузите на сервер изображение формата...
+                    div(class = "form-group")
+                        input(type = "text" name="messages" size="40")
+                    div(class = "form-group")
+                        input(type = "file" name ="image")
+                    div(class = "form-group")
+                div(class="col-md-6")
+                    p Выберите цветовой канал для формирования стегоключа
+                    div(class="form-group")
+                        input(id="red" type="radio" name="color" value="Red")
+                        label(for="red") Red
+                        br
+                        input(id="green" type="radio" name="color" value="Green")
+                        label(for="green") Green
+                        br
+                        input(id="blue" type="radio" name="color" value="Blue")
+                        label(for="blue") Blue
+                        br
+            div(class="form-group text-center")
+                div(class="col-12")
+                    button(class="btn btn-primary" type = "submit" name = "submit") Загрузить
+
+

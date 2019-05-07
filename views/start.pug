@@ -1,0 +1,20 @@
+extends layout
+
+block title
+    title Test
+
+block content
+    div(class="container")
+        h1 Hey there!On this web-page you can hide your message in image:)
+        p What would you like to do with your image?
+    div(class="container")
+        div(class="row")
+            div(class="col-md-6")
+                h1 Encode DWM
+                button#btnEncode(class="btn" )
+                    a(href="/enc") Encode
+            div(class="col-md-6")
+                h1 Decode DWM
+                button#btnDecode(class="btn")
+                    a(href="/dec") Decode
+
