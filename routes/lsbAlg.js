@@ -17,7 +17,6 @@ function stringToBits(str) {
             }
         }
     }
-
     return bits;
 }
 
@@ -35,21 +34,28 @@ function bitsToString(bits) {
     return str;
 }
 
-
-function encode(channel, stegotext, fn) {
-    fn= fn || function index(n) { return n };
-
+function test(channel) {
+    return channel;
+}
+function encode(channel, stegotext, key) {
+    var fn= function index(n) {
+        n +=3;
+        return n;
+    };
     var i = 0;
     var channelLength = channel.length;
     console.log("channelLength: "+channelLength);
     var textLength;
     var index;
+    var k = key;
 
+    console.log("k: "+k);
     textLength = stegotext.length;
     console.log("textLength: "+textLength);
     stegotext = stringToBits(stegotext);
     console.log("stringToBits(stegotext): "+stegotext);
-    // Encode length into the first 32 bytes
+
+    // кодировка первых 32 битов длиной сообщения.lengthString - длина сообщения
     var lengthString = '';
     lengthString += String.fromCharCode((textLength >> 32) & 255);
     lengthString += String.fromCharCode((textLength >> 24) & 255);
@@ -62,54 +68,76 @@ function encode(channel, stegotext, fn) {
         var length = data.length;
         console.log("data.length: "+length);
         var j = 0;
-
-        //пока существуют значения изображения и внедряемой информации
+        //********
+        /*if(start!==null){index = start;}
+        else {
+            index = fn(k);
+            console.log("index: "+index);
+        }*/
+        //Запись сообщения. пока существуют значения изображения и внедряемой информации.
         while (i < channelLength && j < length) {
-
-            index = fn(i);
+            index = fn(k);
             if (index < 0) {
                 break;
             }
             channel[index] = (channel[index] & 254) + (data[j] ? 1 : 0);
+           // index = fn(k);
+            k = index;
             i += 1;
             j += 1;
         }
+        console.log("index: "+index);
+        console.log("K: "+index);
     }
-
     unload(lengthString);
     unload(stegotext);
 
-    return channel
+    return channel;
 }
 
-function decode(channel, fn) {
-    fn = fn || function index(n) { return n }
+function decode(channel, key, start) {
+    var fn = function index(n) {
+        n +=3;
+        return n
+    };
 
-    var i = 0
-        , l = 0
-        , stegotext = []
-        , length = []
-        , index
+    var i = 0;
+    var l = 0;
+    var stegotext = [];
+    var length = [];
+    var index;
+    var k = key;
+    var lengthIndex;
+    var lengthKey= key-3;
 
+    //определение длины сообщения
     for (var n = 0; n < 32; n += 1) {
-        length[n] = (channel[fn(n)] & 1) ? 1 : 0
+        lengthIndex = fn(lengthKey);
+        length[n] = (channel[fn(lengthIndex)] & 1) ? 1 : 0;
+        lengthKey = lengthIndex;
     }
-    length = bitsToString(length)
+    console.log("bit length: "+length);
+    length = bitsToString(length);
+    l += length.charCodeAt(0) << 32;
+    console.log(l);
+    l += length.charCodeAt(1) << 24;
+    l += length.charCodeAt(2) << 16;
+    l += length.charCodeAt(3) << 8;
+    l = Math.min(l * 8, channel.length);
 
-    l += length.charCodeAt(0) << 32
-    l += length.charCodeAt(1) << 24
-    l += length.charCodeAt(2) << 16
-    l += length.charCodeAt(3) << 8
-    l = Math.min(l * 8, channel.length)
-
-    while (i < l) {
-        index = fn(i + 32)
-        if (index < 0) break
-        stegotext[i] = (channel[index] & 1) ? 1 : 0
-        i += 1
+    console.log("l: "+l);
+    index = start;
+    while (i < l+32) {
+        index = fn(k);
+        if (index < 0) break;
+        stegotext[i] = (channel[index] & 1) ? 1 : 0;
+        //index = fn(k);
+        i += 1;
+        k = index;
     }
+    var resultString = bitsToString(stegotext);
 
-    return bitsToString(stegotext)
+   return resultString.slice(3);
 }
 
 module.exports = {
@@ -117,4 +145,5 @@ module.exports = {
     , decode: decode
     , bitsToString: bitsToString
     , stringToBits: stringToBits
-}
+    , test : test
+};
