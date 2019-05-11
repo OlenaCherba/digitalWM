@@ -6,16 +6,28 @@
     "start": "node ./bin/www"
   },
   "dependencies": {
+    "@rgba-image/pixel": "^0.1.4",
+    "base64-img": "^1.0.4",
+    "base64-to-image": "^1.0.2",
     "body-parser": "^1.19.0",
+    "canvas": "^2.5.0",
     "cookie-parser": "~1.4.3",
     "debug": "~2.6.9",
+    "decimal-to-any": "^1.0.5",
     "express": "~4.16.0",
+    "file-type": "^11.0.0",
     "http-errors": "~1.6.2",
+    "jimp": "^0.6.4",
     "lsb": "^0.1.0",
     "morgan": "~1.9.0",
     "multer": "^1.4.1",
+    "node-gm-captcha": "^1.0.8",
     "pug": "2.0.0-beta11",
+    "q": "^1.5.1",
     "sharp": "^0.22.1",
     "uuid": "^3.3.2"
+  },
+  "devDependencies": {
+    "pngjs-image": "^0.11.7"
   }
 }

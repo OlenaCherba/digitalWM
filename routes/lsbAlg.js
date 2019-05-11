@@ -7,7 +7,7 @@ function stringToBits(str) {
             var character = str[i];
             var number = str.charCodeAt(i);
 
-            console.log(number);
+            //console.log(number);
             // Non-standard characters are treated as spaces
             if(number > 255){
                 number = spaceCode;
@@ -35,6 +35,12 @@ function bitsToString(bits) {
 }
 
 function test(channel) {
+    for(var i = 64; i<64;i++){
+        channel[i] = (channel[i] & 254) + 1;
+    }
+    for(var i = 193; i<257;i++){
+        channel[i] = (channel[i] & 254) + 1;
+    }
     return channel;
 }
 function encode(channel, stegotext, key) {
@@ -47,7 +53,8 @@ function encode(channel, stegotext, key) {
     console.log("channelLength: "+channelLength);
     var textLength;
     var index;
-    var k = key;
+    var k = key+64
+    ;
 
     console.log("k: "+k);
     textLength = stegotext.length;
@@ -96,6 +103,7 @@ function encode(channel, stegotext, key) {
 }
 
 function decode(channel, key, start) {
+    console.log(channel);
     var fn = function index(n) {
         n +=3;
         return n
@@ -106,9 +114,9 @@ function decode(channel, key, start) {
     var stegotext = [];
     var length = [];
     var index;
-    var k = key;
+    var k = key+64;
     var lengthIndex;
-    var lengthKey= key-3;
+    var lengthKey= key+61;
 
     //определение длины сообщения
     for (var n = 0; n < 32; n += 1) {
