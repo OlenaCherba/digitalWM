@@ -2,13 +2,30 @@ extends layout.pug
 
 block title
     title Test
-
 block content
-    p Hey there!On this web-page you can take out your digital watermark from image:)
+    div(class="container")
+        p Загрузите изображение для извлечения ЦВЗ:)
+    div(class="container")
         form(action=" " method="post" enctype = "multipart/form-data")
-            div(class = "form-group")
-                input(type = "file" name ="upload")
-            div(class = "form-group")
+            div(class="row")
+                div(class="col-md-6")
+                    div(class = "form-group")
+                        input(type = "file" name ="image")
+                    div(class = "form-group")
+                div(class="col-md-6")
+                    p Выберите цветовой канал для формирования стегоключа
+                    div(class="form-group")
+                        input(id="red" type="radio" name="color" value="0")
+                        label(for="red") Red
+                        br
+                        input(id="green" type="radio" name="color" value="1")
+                        label(for="green") Green
+                        br
+                        input(id="blue" type="radio" name="color" value="2")
+                        label(for="blue") Blue
+                        br
+            div(class="form-group text-center")
                 div(class="col-12")
                     button(class="btn btn-primary" type = "submit" name = "submit") Загрузить
+
 

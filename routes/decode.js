@@ -3,10 +3,7 @@ var router = express.Router();
 var multer = require('multer');
 var fs = require('fs');
 var lsb = require('./lsbPast');
-var Jimp = require('jimp');
 var bodyParser = require('body-parser');
-//var base64ToImage = require('base64-to-image');
-//var pathDownload = 'public/download/';
 
 var urlencodedParser = bodyParser.urlencoded({
     extended: false
@@ -26,7 +23,6 @@ var fileFilter = function (req, file, cb) {
         cb(null, true);
     }
     else {
-        //console.log("низя");
         cb(new Error('Only png, bmp, tiff are allowed'), false);
     }
 };
@@ -40,12 +36,19 @@ router.get('/', function (req, res) {
     res.render('decode');
 });
 var img ='';
-router.post('/', urlencodedParser, upload.single('image'), function (req, res) {
+router.post('/',urlencodedParser, upload.single('image'), function (req, res) {
     console.log(req.file);
+    var key = 0;
+    if (req.body.color === '0') {
+        key = 0;
+    } else if (req.body.color === '1') {
+        key = 1;
+    } else if (req.body.color === '2') {
+        key = 2;
+    }
     if (!req.file) {
         res.status(401).json({error: 'Please provide an image'});
     }
-
     img = req.file.destination + req.file.filename;
     console.log(lsb.decode(img, key));
     res.render('decode.pug');

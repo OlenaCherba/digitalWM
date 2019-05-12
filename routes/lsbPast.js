@@ -80,26 +80,68 @@ function encode(img, msg, color, filename) {
             msg = stringToBits(msg);
             var ll=0;
             var lm=0;
+            var r,g,b,a = 0;
+            console.log("color="+color);
+
+
             //var col;
 
                 for(var i =0; i < image.getWidth(); i++){
                     for(var j=0; j < image.getHeight();j++){
-                        var pixel = Jimp.intToRGBA(image.getPixelColor(i,j));
-                        var r = pixel.r;
-                        var g = pixel.g;
-                        var b = pixel.b;
-                        var a = pixel.a;
+                        var col=0;
+                         var pixel = Jimp.intToRGBA(image.getPixelColor(i,j));
+                        switch (color) {
+                            case 0:
+                                col = pixel.r;
+
+                                break;
+                            case 1:
+                                col = pixel.g;
+                                break;
+                            case 2:
+                                col = pixel.b;
+                                break;
+                        }
+
+                        r = pixel.r;
+                        g = pixel.g;
+                        b = pixel.b;
+                        a = pixel.a;
 
                         if(ll<lengthMsg.length){
-                            var pixelColor = (r & 254)+(lengthMsg[ll] ? 1 : 0);
-                            console.log("lengthMsg[ll] ? 1 : 0  "+lengthMsg[ll] ? 1 : 0);
-                            resImg.setPixelColor(Jimp.rgbaToInt(pixelColor, g, b, a), i, j);
+                            console.log("colR="+col);
+                            var pixelColor = (col & 254)+(lengthMsg[ll] ? 1 : 0);
+                            console.log("pixelColor"+pixelColor);
+                            //*******
+                            switch (color) {
+                                case 0:
+                                    resImg.setPixelColor(Jimp.rgbaToInt(pixelColor, g, b, a), i, j);
+                                    break;
+                                case 1:
+                                    resImg.setPixelColor(Jimp.rgbaToInt(r, pixelColor, b, a), i, j);
+                                    break;
+                                case 2:
+                                    resImg.setPixelColor(Jimp.rgbaToInt(r, g, pixelColor, a), i, j);
+                                    break;
+                            }
                             ll++;
-
                         }
                         else if(ll>=lengthMsg.length && lm<msg.length){
-                            var pixelColor = (r &254)+(msg[lm] ? 1 : 0);
-                            resImg.setPixelColor(Jimp.rgbaToInt(pixelColor, g, b, a), i, j);
+                            //************
+                            var pixelColor = (col & 254)+(msg[lm] ? 1 : 0);
+                            console.log("pixelColor"+pixelColor);
+                            //*******
+                            switch (color) {
+                                case 0:
+                                    resImg.setPixelColor(Jimp.rgbaToInt(pixelColor, g, b, a), i, j);
+                                    break;
+                                case 1:
+                                    resImg.setPixelColor(Jimp.rgbaToInt(r, pixelColor, b, a), i, j);
+                                    break;
+                                case 2:
+                                    resImg.setPixelColor(Jimp.rgbaToInt(r, g, pixelColor, a), i, j);
+                                    break;
+                            }
                             lm++;
                         } else  resImg.setPixelColor(image.getPixelColor(i,j), i, j);
 
@@ -109,12 +151,11 @@ function encode(img, msg, color, filename) {
             console.log("msg "+msg);
             var file = pathDownload + filename;
             console.log(file);
-            console.log(resImg);
-
             resImg.write(file, function (err) {
                 if(err) throw err;
                 console.log("success encoded");
             });
+            console.log(decode(file, color));
             // Do stuff with the image.
         })
         .catch(err => {
@@ -129,32 +170,42 @@ function decode(img, color){
             var stegotext = [];
             var length = [];
             var index=0;
-
            var intLength;
-
             var n =0;
+
             for(var i =0; i < image.getWidth(); i++){
                 for(var j=0; j < image.getHeight();j++){
+                    var col=0;
                     var pixel = Jimp.intToRGBA(image.getPixelColor(i,j));
-                    var r = pixel.r;
-                    var g = pixel.g;
-                    var b = pixel.b;
-                    var a = pixel.a;
+                    switch (color) {
+                        case 0:
+                            col = pixel.r;
+                            break;
+                        case 1:
+                            col = pixel.g;
+                            break;
+                        case 2:
+                            col = pixel.b;
+                            break;
+                    }
 
                     if(n < 32) {
-                        length[n] = (r & 1) ? 1 : 0;
-                        //console.log("length="+length);
-                        //console.log("r="+r);
-                       //console.log("(r & 1) ? 1 : 0 "+(r & 1) ? 1 : 0);
+                        length[n] = (col & 1) ? 1 : 0;
+                       // console.log("length="+length);
+                        console.log("col="+col);
                         n++;
                     } else if(n===32){
                         intLength=lengthToInt(length);
-                       // console.log("intLeng="+intLength);
-                        if(index <intLength+32){
-                            stegotext[index]=(r&1)?1:0;
+                       //console.log("intLeng="+intLength);
+                        if(index <intLength){
+                            console.log("col2="+col);
+                            stegotext[index]=(col&1)?1:0;
+                            console.log(stegotext[index]);
                             index++;
-                        } else if(index === intLength+32) {
+                        }
+                        if(index === intLength) {
                             resultString = bitsToString(stegotext);
+                            console.log(stegotext);
                             break;
                         }
                     }
