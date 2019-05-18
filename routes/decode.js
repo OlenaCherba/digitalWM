@@ -50,7 +50,7 @@ router.post('/',urlencodedParser, upload.single('image'), function (req, res) {
         res.status(401).json({error: 'Please provide an image'});
     }
     img = req.file.destination + req.file.filename;
-    console.log(lsb.decode(img, key));
+    lsb.decode(img, key);
     res.render('decode.pug');
 });
 

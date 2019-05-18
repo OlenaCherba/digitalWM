@@ -3,6 +3,7 @@ var router = express.Router();
 var multer = require('multer');
 var fs = require('fs');
 var lsb = require('./lsbPast');
+var bloks = require('./blocks');
 var bodyParser = require('body-parser');
 var Jimp = require('jimp');
 
@@ -62,7 +63,8 @@ router.post('/', urlencodedParser, upload.single('image'), function (req, res) {
     img = req.file.destination + req.file.filename;
     console.log(img);
 
-    lsb.encode(img, msg, key, req.file.filename);
+    //lsb.encode(img, msg, key, req.file.filename);
+    bloks.encode(img, msg, key, 13);
 
     res.render('encode.pug', {Image:pathDownload+req.file.filename });
 });

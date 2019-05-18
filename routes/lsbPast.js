@@ -9,8 +9,6 @@ function stringToBits(str) {
         for(var i = 0, l = str.length; i<l; i++){
             var character = str[i];
             var number = str.charCodeAt(i);
-
-            //console.log(number);
             // Non-standard characters are treated as spaces
             if(number > 255){
                 number = spaceCode;
@@ -47,16 +45,13 @@ function createBitsForTextLength(text) {
     lengthString += String.fromCharCode((textLength >> 16) & 255);
     lengthString += String.fromCharCode((textLength >>  8) & 255);
     lengthString = stringToBits(lengthString);
-    console.log("stringToBits(lengthString)"+lengthString);
 
     return lengthString;
 }
 function lengthToInt(length){
     length = bitsToString(length);
     var l = 0;
-    var int = 0
     l += length.charCodeAt(0) << 32;
-    int = l;
     l += length.charCodeAt(1) << 24;
     l += length.charCodeAt(2) << 16;
     l += length.charCodeAt(3) << 8;
@@ -81,10 +76,6 @@ function encode(img, msg, color, filename) {
             var ll=0;
             var lm=0;
             var r,g,b,a = 0;
-            console.log("color="+color);
-
-
-            //var col;
 
                 for(var i =0; i < image.getWidth(); i++){
                     for(var j=0; j < image.getHeight();j++){
@@ -109,9 +100,7 @@ function encode(img, msg, color, filename) {
                         a = pixel.a;
 
                         if(ll<lengthMsg.length){
-                            console.log("colR="+col);
                             var pixelColor = (col & 254)+(lengthMsg[ll] ? 1 : 0);
-                            console.log("pixelColor"+pixelColor);
                             //*******
                             switch (color) {
                                 case 0:
@@ -129,7 +118,6 @@ function encode(img, msg, color, filename) {
                         else if(ll>=lengthMsg.length && lm<msg.length){
                             //************
                             var pixelColor = (col & 254)+(msg[lm] ? 1 : 0);
-                            console.log("pixelColor"+pixelColor);
                             //*******
                             switch (color) {
                                 case 0:
@@ -148,7 +136,6 @@ function encode(img, msg, color, filename) {
                     }
                 }
            // }
-            console.log("msg "+msg);
             var file = pathDownload + filename;
             console.log(file);
             resImg.write(file, function (err) {
@@ -191,21 +178,15 @@ function decode(img, color){
 
                     if(n < 32) {
                         length[n] = (col & 1) ? 1 : 0;
-                       // console.log("length="+length);
-                        console.log("col="+col);
                         n++;
                     } else if(n===32){
                         intLength=lengthToInt(length);
-                       //console.log("intLeng="+intLength);
                         if(index <intLength){
-                            console.log("col2="+col);
                             stegotext[index]=(col&1)?1:0;
-                            console.log(stegotext[index]);
                             index++;
                         }
                         if(index === intLength) {
                             resultString = bitsToString(stegotext);
-                            console.log(stegotext);
                             break;
                         }
                     }
@@ -220,7 +201,7 @@ function decode(img, color){
             });
         })
         .catch(err=>{
-
+            throw err;
         })
 
 }
