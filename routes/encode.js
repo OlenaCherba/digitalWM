@@ -64,7 +64,7 @@ router.post('/', urlencodedParser, upload.single('image'), function (req, res) {
     console.log(img);
 
     //lsb.encode(img, msg, key, req.file.filename);
-    bloks.encode(img, msg, key, 13);
+    bloks.encode(img, msg, key, 13, 10, req.file.filename);
 
     res.render('encode.pug', {Image:pathDownload+req.file.filename });
 });

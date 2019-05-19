@@ -84,7 +84,6 @@ function encode(img, msg, color, filename) {
                         switch (color) {
                             case 0:
                                 col = pixel.r;
-
                                 break;
                             case 1:
                                 col = pixel.g;
