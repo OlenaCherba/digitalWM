@@ -28,7 +28,6 @@ var fileFilter = function (req, file, cb) {
         cb(null, true);
     }
     else {
-        console.log("низя");
         cb(new Error('Only png, bmp, tiff are allowed'), false);
     }
 };
@@ -48,6 +47,8 @@ var img = '';
 //var encodeImg = Buffer.alloc(211021);
 router.post('/', urlencodedParser, upload.single('image'), function (req, res) {
     var msg = req.body.messages;
+    var seed = req.body.seed;
+    var E = req.body.E;
     var key = 0;
     if (req.body.color === '0') {
         key = 0;
@@ -64,7 +65,7 @@ router.post('/', urlencodedParser, upload.single('image'), function (req, res) {
     console.log(img);
 
     //lsb.encode(img, msg, key, req.file.filename);
-    bloks.encode(img, msg, key, 13, 3, req.file.filename);
+    bloks.encode(img, msg, key, seed, E, req.file.filename);
 
     res.render('encode.pug', {Image:pathDownload+req.file.filename });
 });

@@ -49,7 +49,7 @@ function doEncode(mask, pixelBlock, infBit, E) {
     var l1 = 0;
     var bright0 = 0;
     var bright1 = 0;
-   // console.log(pixelBlock);
+    console.log(pixelBlock);
     //console.log(newPixelBlock);
     for (var i = 0; i < 8; i++) {
         for (var j = 0; j < 8; j++) {
@@ -131,7 +131,7 @@ function doEncode(mask, pixelBlock, infBit, E) {
             }
             break;
     }
-    //console.log(newPixelBlock);
+    console.log(newPixelBlock);
     return newPixelBlock;
 }
 function encode(img, msg, color, seed, E, filename) {
@@ -149,7 +149,7 @@ function encode(img, msg, color, seed, E, filename) {
             var ll=0;
             var lm=0;
             //random.use(seedrandom(20));
-            var rng = random.clone(seedrandom(20));
+            var rng = random.clone(seedrandom(seed));
             rng.patch();
             //Создание маски. блок 8х8
             for(var k = 0; k<8;k++){
@@ -170,7 +170,6 @@ function encode(img, msg, color, seed, E, filename) {
                             for(var j = m; j < m+8; j++){
                                 var col = 0;
                                 var pixel = Jimp.intToRGBA(image.getPixelColor(i, j));
-                                console.log("col: "+ color);
                                 switch (color) {
                                     case 0:
                                         col = pixel.r;
@@ -249,7 +248,6 @@ function encode(img, msg, color, seed, E, filename) {
                             }
                             p++;
                         }
-                        console.log("msg[lm]: "+msg[lm]);
                         newBlock = doEncode(mask, pixelBlock, msg[lm], E);
                         if(newBlock===pixelBlock){
                             for(var i = n; i< n+8; i++){
@@ -270,17 +268,14 @@ function encode(img, msg, color, seed, E, filename) {
                                     var  a = pixel.a;
                                     switch (color) {
                                         case 0:
-                                            console.log("newBlock[iN][jN] "+newBlock[xN][yN]);
                                             image.setPixelColor(Jimp.rgbaToInt(newBlock[xN][yN], g, b, a), i, j);
                                             yN++;
                                             break;
                                         case 1:
-                                            console.log("newBlock[iN][jN] "+newBlock[xN][yN]);
                                             image.setPixelColor(Jimp.rgbaToInt(r, newBlock[xN][yN], b, a), i, j);
                                             yN++;
                                             break;
                                         case 2:
-                                            console.log("newBlock[iN][jN] "+newBlock[xN][yN]);
                                             image.setPixelColor(Jimp.rgbaToInt(r, g, newBlock[xN][yN], a), i, j);
                                             yN++;
                                             break;
@@ -373,7 +368,7 @@ function decode(img, color, seed, E) {
             var lm=0;
 
             //random.use(seedrandom(20));
-            var rng = random.clone(seedrandom(20));
+            var rng = random.clone(seedrandom(seed));
             rng.patch();
             //Создание маски. блок 8х8
             for(var k = 0; k<8;k++){

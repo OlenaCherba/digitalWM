@@ -39,6 +39,8 @@ router.get('/', function (req, res) {
 var img ='';
 router.post('/',urlencodedParser, upload.single('image'), function (req, res) {
     console.log(req.file);
+    var seed = req.body.seed;
+    var E = req.body.E;
     var key = 0;
     if (req.body.color === '0') {
         key = 0;
@@ -51,7 +53,7 @@ router.post('/',urlencodedParser, upload.single('image'), function (req, res) {
         res.status(401).json({error: 'Please provide an image'});
     }
     img = req.file.destination + req.file.filename;
-    bloks.decode(img, key, 13, 3);
+    bloks.decode(img, key, seed, E);
     res.render('decode.pug');
 });
 
