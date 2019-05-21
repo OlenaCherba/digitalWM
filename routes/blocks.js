@@ -19,7 +19,7 @@ function average(subblock) {
 
 function change(block, id) {
     var k1 = 4;
-    var k2 = 45;
+    var k2 = 40;
     var newBlock = [];
     if(id === 0){
         for(var i = 0; i < block.length;i++){
@@ -49,7 +49,7 @@ function doEncode(mask, pixelBlock, infBit, E) {
     var l1 = 0;
     var bright0 = 0;
     var bright1 = 0;
-    console.log(pixelBlock);
+   // console.log(pixelBlock);
     //console.log(newPixelBlock);
     for (var i = 0; i < 8; i++) {
         for (var j = 0; j < 8; j++) {
@@ -67,12 +67,12 @@ function doEncode(mask, pixelBlock, infBit, E) {
             }
         }
     }
-    console.log("block0="+subblock0);
-    console.log("block1="+subblock1);
+   // console.log("block0="+subblock0);
+   // console.log("block1="+subblock1);
     bright0 = average(subblock0);
     bright1 = average(subblock1);
-    console.log("bright0"+bright0);
-    console.log("bright1"+bright1);
+   // console.log("bright0"+bright0);
+   // console.log("bright1"+bright1);
 
     switch (infBit) {
         case 0:
@@ -83,11 +83,11 @@ function doEncode(mask, pixelBlock, infBit, E) {
                 newSub1 = change(subblock1, 1);
                 newSub0 = change(subblock0, 0);
                 //console.log("newSub1"+newSub1);
-                //console.log("newSub0"+newSub0);
+               // console.log("newSub0"+newSub0);
                 bright0 = average(newSub0);
                 bright1 = average(newSub1);
-                //console.log("bright00"+bright0);
-                //console.log("bright11"+bright1);
+               // console.log("bright00"+bright0);
+               // console.log("bright11"+bright1);
                 newSub1 = change(subblock1, 1);
                 newSub0 = change(subblock0, 0);
                 var s0 = 0;
@@ -100,8 +100,6 @@ function doEncode(mask, pixelBlock, infBit, E) {
                                s0++;
                         } else if (m === 1) {
                             newPixelBlock[x][y]=newSub1[s1];
-                               //newPixelBlock[p].push(v);
-                            //console.log(newPixelBlock);
                                s1++;
                         }
                     }
@@ -116,17 +114,15 @@ function doEncode(mask, pixelBlock, infBit, E) {
                 newPixelBlock = pixelBlock;
             }
             else if(bright0-bright1 < E) {
-                newSub1 = change(subblock1, 1);
-                newSub0 = change(subblock0, 0);
+                newSub1 = change(subblock1, 0);
+                newSub0 = change(subblock0, 1);
                 for (var x = 0; x< 8; x++) {
                     for (var y = 0; y < 8; y++) {
                         var m = mask[x][y];
                         if (m === 0) {
-                            v = newSub0[s0];
                             newPixelBlock[x][y]=newSub0[s0];
                             s0++;
                         } else if (m === 1) {
-                            v = newSub1[s1];
                             newPixelBlock[x][y]=newSub1[s1];
                             s1++;
                         }
@@ -135,7 +131,7 @@ function doEncode(mask, pixelBlock, infBit, E) {
             }
             break;
     }
-    console.log("new"+newPixelBlock);
+    //console.log(newPixelBlock);
     return newPixelBlock;
 }
 function encode(img, msg, color, seed, E, filename) {
@@ -144,8 +140,9 @@ function encode(img, msg, color, seed, E, filename) {
             var resImg = new Jimp(image.getWidth(), image.getHeight());
             var lengthMsg = bits.createBitsForTextLength(msg);
             msg = bits.stringToBits(msg);
-            var i =0;
-            var j =0;
+            console.log("msg: "+msg);
+            //var i =0;
+            //var j =0;
             var iN = 0;
             var jN = 0;
             var mask=[[],[],[],[],[],[],[],[]];
@@ -153,6 +150,8 @@ function encode(img, msg, color, seed, E, filename) {
             var newBlock = [[]];
             var ll=0;
             var lm=0;
+            var v = 0;
+            var c = 0;
             //random.use(seedrandom(20));
             var rng = random.clone(seedrandom(20));
             rng.patch();
@@ -164,110 +163,21 @@ function encode(img, msg, color, seed, E, filename) {
             }
             console.log(mask);
 
-            for(var n = 0; n<image.getHeight(); n+=8){
-                for(var m = 0; m<image.getWidth();m+=8){
+            for(var n = 0; n<image.getWidth(); n+=8){
+                for(var m = 0; m<image.getHeight();m+=8){
                     var p = 0 ;
-                    i = n;
-                    j = m;
                     iN = n;
                     jN = m;
                     ////////////////////////////
                     if(ll<lengthMsg.length){
-                        while (i<n+8) {
-                            console.log("n:" + n);
-                            console.log("m:" + m);
-                            //for(var x = 0; x < 8; x++){
-                                while (j < m + 8) {
-                                    var col = 0;
-                                    var pixel = Jimp.intToRGBA(image.getPixelColor(i, j));
-                                    switch (color) {
-                                        case 0:
-                                            col = pixel.r;
-                                            break;
-                                        case 1:
-                                            col = pixel.g;
-                                            break;
-                                        case 2:
-                                            col = pixel.b;
-                                            break;
-                                    }
-                                    //var pixel = Jimp.intToRGBA(image.getPixelColor(i,j));
-                                   // console.log("i:" + i);
-                                   // console.log("j:" + j);
-                                    pixelBlock[p].push(col);
-                                    j++;
-                                }
-                           // }
-                            p++;
-                            i++;
-                            j = m;
-                        }i = n;
-
-                        newBlock = doEncode(mask, pixelBlock, lengthMsg[ll], E);
-                        console.log(newBlock);
-                        if(newBlock===pixelBlock){
-                            console.log("iN:" + iN);
-                            console.log("jN:" + jN);
-                            while(iN<n+8){
-                                while (jN < m+8){
-                                    var col = 0;
-                                    var pixel = Jimp.intToRGBA(image.getPixelColor(iN, jN));
-                                    switch (color) {
-                                        case 0:
-                                            col = pixel.r;
-                                            break;
-                                        case 1:
-                                            col = pixel.g;
-                                            break;
-                                        case 2:
-                                            col = pixel.b;
-                                            break;
-                                    }
-                                    resImg.setPixelColor(image.getPixelColor(iN, jN), iN, jN);
-                                    jN++;
-                                }iN++;
-                                jN = m;
-                            }iN = n;
-                        } else if(newBlock!==pixelBlock){
-                            console.log("iN - newBlock:" + iN);
-                            console.log("jN - newBlock:" + jN);
-                            var xN = 0;
-                            var yN = 0;
-                            while(iN<n+8 && xN < 8 ){
-                                while (jN < m+8 && yN < 8){
-                                    var col = 0;
-                                    var pixel = Jimp.intToRGBA(image.getPixelColor(iN, jN));
-                                    var  r = pixel.r;
-                                    var  g = pixel.g;
-                                    var  b = pixel.b;
-                                    var  a = pixel.a;
-                                    switch (color) {
-                                        case 0:
-                                            console.log("newBlock[iN][jN] "+newBlock[xN][yN]);
-                                            resImg.setPixelColor(Jimp.rgbaToInt(newBlock[xN][yN], g, b, a), iN, jN);
-                                            break;
-                                        case 1:
-                                            resImg.setPixelColor(Jimp.rgbaToInt(r, newBlock[iN][jN], b, a), iN, jN);
-                                            break;
-                                        case 2:
-                                            resImg.setPixelColor(Jimp.rgbaToInt(r, g, newBlock[iN][jN], a), iN, jN);
-                                            break;
-                                    }
-                                    yN++;
-                                    jN++;
-                                }iN++;
-                                xN++;
-                                jN = m;
-                            }iN = n;
-                        }
-                        ll++;
-                        pixelBlock = [[],[],[],[],[],[],[],[]];
-                    }
-                    else if(ll>=lengthMsg.length && lm<msg.length){
-                        while (i<n+8){
-                            while(j<m+8){
-                                var col=0;
-                                var pixel = Jimp.intToRGBA(image.getPixelColor(i,j));
+                        //console.log("n:" + n);
+                        //console.log("m:" + m);
+                        for(var i = n; i< n+8; i++){
+                            for(var j = m; j < m+8; j++){
+                                //console.log("i:" + i);
+                               // console.log("j:" + j);
+                                var col = 0;
+                                var pixel = Jimp.intToRGBA(image.getPixelColor(i, j));
                                 switch (color) {
                                     case 0:
                                         col = pixel.r;
@@ -279,82 +189,137 @@ function encode(img, msg, color, seed, E, filename) {
                                         col = pixel.b;
                                         break;
                                 }
-
-                                //console.log("i:"+i);
-                                //console.log("j:"+j);
                                 pixelBlock[p].push(col);
-                                j++;
                             }
                             p++;
-                            i++;
-                            j=m;
                         }
-                        newPixelBlock = doEncode(mask, pixelBlock, msg[lm], E);
-                        console.log(newPixelBlock);
-                        i = n;
+
+                        newBlock = doEncode(mask, pixelBlock, lengthMsg[ll], E);
+                        //console.log(newBlock);
                         if(newBlock===pixelBlock){
-                            console.log("iN :" + iN);
-                            console.log("jN :" + jN);
-                            while(iN<n+8){
-                                while (jN < m+8){
-                                    var col = 0;
-                                    var pixel = Jimp.intToRGBA(image.getPixelColor(iN, jN));
-                                    switch (color) {
-                                        case 0:
-                                            col = pixel.r;
-                                            break;
-                                        case 1:
-                                            col = pixel.g;
-                                            break;
-                                        case 2:
-                                            col = pixel.b;
-                                            break;
-                                    }
-                                    resImg.setPixelColor(image.getPixelColor(iN, jN), iN, jN);
-                                    jN++;
-                                }iN++;
-                                yN=0;
-                                jN = m;
-                            }iN = n;
+                            //console.log("n:" + n);
+                            //console.log("m:" + m);
+                            for(var i = n; i< n+8; i++){
+                                for(var j = m; j < m+8; j++){
+                                    //console.log("i:" + i);
+                                    //console.log("j:" + j);
+                                    resImg.setPixelColor(image.getPixelColor(i, j), i, j);
+                                }
+                            }
+
                         } else if(newBlock!==pixelBlock){
-                            console.log("iN - newBlock:" + iN);
-                            console.log("jN - newBlock:" + jN);
+                           // console.log("n:" + n);
+                            //console.log("m:" + m);
                             var xN = 0;
                             var yN = 0;
-                            while(iN<n+8 || xN < 8){
-                                while (jN < m+8 || yN<8){
+                            for(var i = n; i< n+8; i++){
+                                for(var j = m; j < m+8; j++){
+                                  //  console.log("i:" + i);
+                                  //  console.log("j:" + j);
                                     var col = 0;
-                                    var pixel = Jimp.intToRGBA(image.getPixelColor(iN, jN));
+                                    var pixel = Jimp.intToRGBA(image.getPixelColor(i, j));
                                     var  r = pixel.r;
                                     var  g = pixel.g;
                                     var  b = pixel.b;
                                     var  a = pixel.a;
                                     switch (color) {
                                         case 0:
-                                            console.log("newBlock[iN][jN] "+newBlock[xN][yN]);
-                                            resImg.setPixelColor(Jimp.rgbaToInt(newBlock[xN][yN], g, b, a), iN, jN);
+                                            //console.log("newBlock[iN][jN] "+newBlock[xN][yN]);
+                                            resImg.setPixelColor(Jimp.rgbaToInt(newBlock[xN][yN], g, b, a), i, j);
+                                            yN++;
                                             break;
                                         case 1:
-                                            resImg.setPixelColor(Jimp.rgbaToInt(r, newBlock[iN][jN], b, a), iN, jN);
+                                            resImg.setPixelColor(Jimp.rgbaToInt(r, newBlock[xN][yN], b, a), i, j);
+                                            yN++;
                                             break;
                                         case 2:
-                                            resImg.setPixelColor(Jimp.rgbaToInt(r, g, newBlock[iN][jN], a), iN, jN);
+                                            resImg.setPixelColor(Jimp.rgbaToInt(r, g, newBlock[xN][yN], a), i, j);
+                                            yN++;
                                             break;
                                     }
-                                    yN++;
-                                    jN++;
-                                }xN++;
-                                iN++;
-                                yN = 0;
-                                jN = m;
-                            }iN = n;
+
+                                }
+                                yN=0;
+                                xN++;
+                            }
                         }
-                        //j= b;
+                        ll++;
+                        pixelBlock = [[],[],[],[],[],[],[],[]];
+                    }
+                    else if(ll>=lengthMsg.length && lm<msg.length){
+                       // console.log("n:" + n);
+                        //console.log("m:" + m);
+                        for(var i = n; i< n+8; i++){
+                            for(var j = m; j < m+8; j++){
+                              //  console.log("i:" + i);
+                              //  console.log("j:" + j);
+                                var col = 0;
+                                var pixel = Jimp.intToRGBA(image.getPixelColor(i, j));
+                                switch (color) {
+                                    case 0:
+                                        col = pixel.r;
+                                        break;
+                                    case 1:
+                                        col = pixel.g;
+                                        break;
+                                    case 2:
+                                        col = pixel.b;
+                                        break;
+                                }
+                                pixelBlock[p].push(col);
+                            }
+                            p++;
+                        }
+                        console.log("msg[lm]: "+msg[lm]);
+                        newBlock = doEncode(mask, pixelBlock, msg[lm], E);
+                        //console.log(newBlock);
+                        if(newBlock===pixelBlock){
+                            for(var i = n; i< n+8; i++){
+                                for(var j = m; j < m+8; j++){
+                                    resImg.setPixelColor(image.getPixelColor(i, j), i, j);
+                                }
+                            }
+                        } else if(newBlock!==pixelBlock){
+                            var xN = 0;
+                            var yN = 0;
+                            for(var i = n; i< n+8; i++){
+                                for(var j = m; j < m+8; j++){
+                                    var col = 0;
+                                    var pixel = Jimp.intToRGBA(image.getPixelColor(i, j));
+                                    var  r = pixel.r;
+                                    var  g = pixel.g;
+                                    var  b = pixel.b;
+                                    var  a = pixel.a;
+                                    switch (color) {
+                                        case 0:
+                                           // console.log("newBlock[iN][jN] "+newBlock[xN][yN]);
+                                            resImg.setPixelColor(Jimp.rgbaToInt(newBlock[xN][yN], g, b, a), i, j);
+                                            yN++;
+                                            break;
+                                        case 1:
+                                            resImg.setPixelColor(Jimp.rgbaToInt(r, newBlock[xN][yN], b, a), i, j);
+                                            yN++;
+                                            break;
+                                        case 2:
+                                            resImg.setPixelColor(Jimp.rgbaToInt(r, g, newBlock[xN][yN], a), i, j);
+                                            yN++;
+                                            break;
+                                    }
+                                }
+                                yN=0;
+                                xN++;
+                            }
+                        }
                         lm++;
                         pixelBlock = [[],[],[],[],[],[],[],[]];
-                    } else resImg.setPixelColor(image.getPixelColor(n,m), n, m);
-
-                    ////////////////////////////
+                    } else {
+                        for(var i = n; i < image.getWidth(); i++){
+                           for(var j = m; j<image.getHeight();j++){
+                               resImg.setPixelColor(image.getPixelColor(i,j), i, j);
+                           }
+                        }
+                        break;
+                    }
                 }
             }
             var file = pathDownload + filename;
@@ -368,6 +333,145 @@ function encode(img, msg, color, seed, E, filename) {
                 throw err;
             })
 }
+
+function  checkValue(mask, pixelBlock, E) {
+    var subblock0 = [];
+    var subblock1 = [];
+    var l0 = 0;
+    var l1 = 0;
+    var bright0 = 0;
+    var bright1 = 0;
+    var v;
+    console.log(pixelBlock);
+    for (var i = 0; i < 8; i++) {
+        for (var j = 0; j < 8; j++) {
+            var value = 0;
+            var m = mask[i][j];
+            if (m === 0) {
+                value = pixelBlock[i][j];
+                subblock0[l0] = value;
+                l0++;
+            } else if (m === 1) {
+                value = pixelBlock[i][j];
+                subblock1[l1] = value;
+                l1++;
+            }
+        }
+    }
+    //console.log("block0="+subblock0);
+    //console.log("block1="+subblock1);
+    bright0 = average(subblock0);
+    bright1 = average(subblock1);
+    console.log("bright0"+bright0);
+    console.log("bright1"+bright1);
+
+    if(bright0-bright1 >= E){
+        v = 1;
+    } else if (bright0-bright1 < E){
+        v = 0;
+    } else if(bright0-bright1 <= -E){
+        v = 0;
+    } else if (bright0-bright1 > -E) {
+        v = 0;
+    }else return;
+
+    console.log("v: "+v);
+    return v;
+}
+function decode(img, color, seed, E) {
+    Jimp.read(img)
+        .then(image=>{
+            var resultString='';
+            var stegotext = [];
+            var length = [];
+            var index=0;
+            var intLength;
+            var l =0;
+
+            var iN = 0;
+            var jN = 0;
+            var mask=[[],[],[],[],[],[],[],[]];
+            var pixelBlock=[[],[],[],[],[],[],[],[]];
+            //var newBlock = [[]];
+            var ll=0;
+            var lm=0;
+
+            //random.use(seedrandom(20));
+            var rng = random.clone(seedrandom(20));
+            rng.patch();
+            //Создание маски. блок 8х8
+            for(var k = 0; k<8;k++){
+                for(var t = 0; t<8;t++){
+                    mask[k][t] =  rng.int(0,1);
+                }
+            }
+            console.log(mask);
+
+            for(var n = 0; n<image.getWidth(); n+=8){
+                for(var m = 0; m<image.getHeight();m+=8){
+                    var p = 0 ;
+                    iN = n;
+                    jN = m;
+                    ////////////////////////////
+                        for(var i = n; i< n+8; i++){
+                            for(var j = m; j < m+8; j++){
+                                var col = 0;
+                                var pixel = Jimp.intToRGBA(image.getPixelColor(i, j));
+                                switch (color) {
+                                    case 0:
+                                        col = pixel.r;
+                                        break;
+                                    case 1:
+                                        col = pixel.g;
+                                        break;
+                                    case 2:
+                                        col = pixel.b;
+                                        break;
+                                }
+                                pixelBlock[p].push(col);
+                            }
+                            p++;
+                        }
+                        console.log("l: "+l);
+                        if(l<32){
+                            console.log("i: "+ i);
+                            console.log("j: "+ j);
+                            length[l]=checkValue(mask, pixelBlock, E);
+                            console.log(length);
+                            l++;
+                        }
+                        else if(l === 32) {
+                            console.log("i: "+ i);
+                            console.log("j: "+ j);
+                            intLength= bits.lengthToInt(length);
+                            console.log("intLeng: "+ intLength);
+                            if(index < intLength){
+                                stegotext[index]=checkValue(mask, pixelBlock, E);
+                                console.log("stego: "+stegotext);
+                                index++;
+                            }
+                            else if(index === intLength) {
+                                resultString = bits.bitsToString(stegotext);
+                                break;
+                            }
+                        }
+                        pixelBlock = [[],[],[],[],[],[],[],[]];
+
+                    }
+                    ////////////////////////////
+                }
+            console.log("decoded: "+ resultString);
+            fs.writeFile(pathDownload+'decrypt.txt', resultString.slice(0, bits.size(length)), function (err) {
+                if(err) throw err;
+                console.log("success");
+            });
+        })
+        .catch(err=>{
+            throw err;
+        })
+}
+
 module.exports = {
-    encode:encode
+    encode:encode,
+    decode: decode
 }

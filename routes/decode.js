@@ -3,6 +3,7 @@ var router = express.Router();
 var multer = require('multer');
 var fs = require('fs');
 var lsb = require('./lsbPast');
+var bloks = require('./blocks');
 var bodyParser = require('body-parser');
 
 var urlencodedParser = bodyParser.urlencoded({
@@ -50,7 +51,7 @@ router.post('/',urlencodedParser, upload.single('image'), function (req, res) {
         res.status(401).json({error: 'Please provide an image'});
     }
     img = req.file.destination + req.file.filename;
-    lsb.decode(img, key);
+    bloks.decode(img, key, 13, 3);
     res.render('decode.pug');
 });
 
