@@ -134,7 +134,7 @@ function doEncode(mask, pixelBlock, infBit, E) {
     console.log(newPixelBlock);
     return newPixelBlock;
 }
-function encode(img, msg, color, seed, E, filename) {
+function encode(img, msg, color, seed, E, filename, cb) {
     Jimp.read(img)
         .then(image=>{
             //var resImg = new Jimp(image.getWidth(), image.getHeight());
@@ -299,6 +299,7 @@ function encode(img, msg, color, seed, E, filename) {
                 if(err) throw err;
                 console.log("success encoded");
             });
+            cb();
         })
         .catch(err=>{
             throw err;
@@ -313,7 +314,7 @@ function  checkValue(mask, pixelBlock, E) {
     var bright0 = 0;
     var bright1 = 0;
     var v;
-    console.log(pixelBlock);
+   // console.log(pixelBlock);
     for (var i = 0; i < 8; i++) {
         for (var j = 0; j < 8; j++) {
             var value = 0;
@@ -333,8 +334,8 @@ function  checkValue(mask, pixelBlock, E) {
     //console.log("block1="+subblock1);
     bright0 = average(subblock0);
     bright1 = average(subblock1);
-    console.log("bright0"+bright0);
-    console.log("bright1"+bright1);
+    //console.log("bright0"+bright0);
+    //console.log("bright1"+bright1);
 
     if(bright0-bright1 >= E){
         v = 1;
@@ -349,7 +350,10 @@ function  checkValue(mask, pixelBlock, E) {
     console.log("v: "+v);
     return v;
 }
-function decode(img, color, seed, E) {
+function getResult(str, len) {
+    return str.slice(0, bits.size(len));
+}
+function decode(img, color, seed, E, cb) {
     Jimp.read(img)
         .then(image=>{
             var resultString='';
@@ -405,20 +409,20 @@ function decode(img, color, seed, E) {
                     }
                     console.log("l: "+l);
                     if(l<32){
-                        console.log("i: "+ i);
-                        console.log("j: "+ j);
+                        //console.log("i: "+ i);
+                        //console.log("j: "+ j);
                         length[l]=checkValue(mask, pixelBlock, E);
                         console.log(length);
                         l++;
                     }
                     else if(l === 32) {
-                        console.log("i: "+ i);
-                        console.log("j: "+ j);
+                        //console.log("i: "+ i);
+                        //console.log("j: "+ j);
                         intLength= bits.lengthToInt(length);
-                        console.log("intLeng: "+ intLength);
+                        //console.log("intLeng: "+ intLength);
                         if(index < intLength){
                             stegotext[index]=checkValue(mask, pixelBlock, E);
-                            console.log("stego: "+stegotext);
+                           // console.log("stego: "+stegotext);
                             index++;
                         }
                         else if(index === intLength) {
@@ -436,6 +440,11 @@ function decode(img, color, seed, E) {
                 if(err) throw err;
                 console.log("success");
             });
+
+            //return resultString.slice(0, bits.size(length));
+            cb(resultString);
+
+
         })
         .catch(err=>{
             throw err;
@@ -444,5 +453,5 @@ function decode(img, color, seed, E) {
 
 module.exports = {
     encode:encode,
-    decode: decode
+    decode: decode,
 }

@@ -1,20 +1,49 @@
-extends layout
+doctype html
+html
+    head
+        block title
+        link(rel="stylesheet", href="/stylesheets/style.css")
+        link(rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous")
+        link(rel="stylesheet" href="https://use.fontawesome.com/releases/v5.8.2/css/all.css" integrity="sha384-oS3vJWv+0UjzBfQzYUhtDYW+Pj2yciDJxpsK1OYPAYjqT085Qq/1cq5FLXAZQ7Ay" crossorigin="anonymous")
+        script(type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1/jquery.min.js")
+    body
+        div(class="container")
+            div( class ="row")
+                div(class="float-left")
+                    img(src="images/logo.png" alt="l")
+            h3(id="intro") Web-сервис для внедрения цифровых водяных знаков в  растровые изображения
+            div(class="row")
+                div(class="col-md-6")
+                    div(class="row intro")
+                        div(class="media")
+                            img(class="d-flex mr-3" src="images/1.png" alt="Generic placeholder image")
+                            div(class="media-body")
+                                p(class="mt-0 text-justify") Для внедрения цифрового водяного изображения в растровое изображение введите необходимую информацию в текстовом поле
+                    div(class="row intro")
+                        div(class="media")
+                            img(class="d-flex mr-3" src="images/2.png" alt="Generic placeholder image")
+                            div(class="media-body")
+                                p(class="mt-0 text-justify") Загрузите изображение в формате PNG
+                div(class="col-md-6")
+                    div(class="row intro")
+                        div(class="media")
+                            img(class="d-flex mr-3" src="images/3.png" alt="Generic placeholder image")
+                            div(class="media-body")
+                                p(class="mt-0 text-justify") Выберите комбинацию параметров, необходимых для создания стеганографического ключа
+                    div(class="row intro")
+                        div(class="media")
+                            img(class="d-flex mr-3" src="images/4.png" alt="Generic placeholder image")
+                            div(class="media-body")
+                                p(class="mt-0 text-justify") Для извлечения цифрового водяного знака загрузите изображение в формате PNG и выберите соответствующую комбинацию параметров для стеганографического ключа
 
-block title
-    title Test
+        div(class="container")
+            div(class="row")
+                div(class="col-md-6")
+                    a(class="btn btn-secondary m-4  d-inline-block" href="/enc") Encode
+                    a(class="btn btn-secondary m-4  d-inline-block" href="/dec") Decode
+                div(id="resources" class="col-md-6 border")
+                    h6 Полезный ресурс:
+                    a(href="https://image.online-convert.com/ru/convert-to-png") Images to PNG
+                    p Конвертация изображений любого формата в PNG
 
-block content
-    div(class="container")
-        h1 Hey there!On this web-page you can hide your message in image:)
-        p What would you like to do with your image?
-    div(class="container")
-        div(class="row")
-            div(class="col-md-6")
-                h1 Encode DWM
-                button#btnEncode(class="btn" )
-                    a(href="/enc") Encode
-            div(class="col-md-6")
-                h1 Decode DWM
-                button#btnDecode(class="btn")
-                    a(href="/dec") Decode
-
+    block content

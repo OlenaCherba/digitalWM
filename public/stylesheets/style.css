@@ -3,7 +3,42 @@ body {
   font: 14px "Lucida Grande", Helvetica, Arial, sans-serif;
 }
 
-a {
-  color: #00B7FF;
+a:hover{
+  color: aliceblue;
+  text-decoration: underline;
+}
+.abtn {
+  color: aliceblue;
+}
+.form{
+  background-color: lavender;
+}
+.red{
+  color: lavender;
+  background-color: darkred;
+  border-radius: 50%;
+}
+.green{
+  color: lavender;
+  background-color: forestgreen;
+  border-radius: 50%;
+}
+.blue{
+  color: lavender;
+  background-color: navy;
+  border-radius: 50%;
+}
+#resources{
+  margin-bottom: 8px;
+  padding-left: 20px;
+  padding-top: 20px;
+  border-radius: 50px 0 50px 0;
+}
+.intro{
+  padding: 10px;
+}
+#intro{
+  margin-top: 20px;
+  margin-bottom: 20px;
 }
 

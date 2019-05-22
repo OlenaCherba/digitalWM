@@ -37,6 +37,7 @@ router.get('/', function (req, res) {
     res.render('decode');
 });
 var img ='';
+var text = '';
 router.post('/',urlencodedParser, upload.single('image'), function (req, res) {
     console.log(req.file);
     var seed = req.body.seed;
@@ -53,8 +54,13 @@ router.post('/',urlencodedParser, upload.single('image'), function (req, res) {
         res.status(401).json({error: 'Please provide an image'});
     }
     img = req.file.destination + req.file.filename;
-    bloks.decode(img, key, seed, E);
-    res.render('decode.pug');
+
+    bloks.decode(img, key, seed, E, function (cb) {
+        console.log("text: "+cb);
+        res.render('decode.pug', {Text: cb});
+    });
+
+
 });
 
 module.exports = router;

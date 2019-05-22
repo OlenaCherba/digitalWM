@@ -1,14 +1,15 @@
-extends layout.pug
+extends start
 
 block title
     title Test
+
 block content
     div(class="container")
-        p Загрузите изображение для извлечения ЦВЗ:)
-    div(class="container")
+    div(class="container border form")
         form(action=" " method="post" enctype = "multipart/form-data")
             div(class="row")
                 div(class="col-md-6")
+                    p Загрузите изображение для извлечения ЦВЗ
                     div(class = "form-group")
                         input(type = "file" name ="image")
                     div(class = "form-group")
@@ -18,13 +19,14 @@ block content
                         div(class="row")
                             div(class = "col-md-4")
                                 input(id="red" type="radio" name="color" value="0")
-                                label(for="red") Red
+                                label(class="red" for="red") "R"
                             div(class = "col-md-4")
                                 input(id="green" type="radio" name="color" value="1")
-                                label(for="green") Green
+                                label(class="green" for="green") "G"
                             div(class = "col-md-4")
                                 input(id="blue" type="radio" name="color" value="2")
-                                label(for="blue") Blue
+                                label(class="blue" for="blue") "B"
+                        p Введите значения параметров, необходимых для создания маски(seed) и определения алгоритма внедрения(E)
                         div(class="row")
                             div(class = "col-md-6")
                                 label(for="seed") Seed:
@@ -32,9 +34,10 @@ block content
                             div(class = "col-md-6")
                                 label(for="E") E:
                                 input(id="E" type = 'text' name="E" size="10")
-
             div(class="form-group text-center")
                 div(class="col-12")
                     button(class="btn btn-primary" type = "submit" name = "submit") Загрузить
-
+                        i(class="fas fa-upload")
+                div(class="col-12")
+                    p #{Text}
 
