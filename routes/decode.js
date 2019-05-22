@@ -55,7 +55,7 @@ router.post('/',urlencodedParser, upload.single('image'), function (req, res) {
     }
     img = req.file.destination + req.file.filename;
 
-    bloks.decode(img, key, seed, E, function (cb) {
+    bloks.decode(img, key, parseInt(seed), parseInt(E), function (cb) {
         console.log("text: "+cb);
         res.render('decode.pug', {Text: cb});
     });

@@ -17,16 +17,20 @@ function average(subblock) {
     return  Math.round(mean/subblock.length);
 }
 
-function change(block, id) {
-    var k1 = 4;
-    var k2 = 40;
+function change(block, id, E, diff) {
+    console.log("diff: "+diff);
+    if(diff<=E){
+        diff=E+15;
+    }
+    var k1 = diff;
+    var k2 = diff;
     var newBlock = [];
     if(id === 0){
         for(var i = 0; i < block.length;i++){
-            if(block[i]<k1){
+            if(block[i]>255-k1){
                 newBlock[i] = block[i];
             }
-            else newBlock[i] = block[i]-k1;
+            else newBlock[i] = block[i]+k1;
         }
     } else if(id === 1){
         for(var i = 0; i < block.length;i++){
@@ -67,29 +71,33 @@ function doEncode(mask, pixelBlock, infBit, E) {
             }
         }
     }
-   // console.log("block0="+subblock0);
-   // console.log("block1="+subblock1);
+   console.log("block0="+subblock0);
+   console.log("block1="+subblock1);
     bright0 = average(subblock0);
     bright1 = average(subblock1);
-   // console.log("bright0"+bright0);
-   // console.log("bright1"+bright1);
+   console.log("bright0"+bright0);
+   console.log("bright1"+bright1);
 
     switch (infBit) {
         case 0:
+
             if(bright0-bright1 <= -E){
                newPixelBlock = pixelBlock;
             }
             else if(bright0-bright1 > -E){
-                newSub1 = change(subblock1, 1);
-                newSub0 = change(subblock0, 0);
-                //console.log("newSub1"+newSub1);
-               // console.log("newSub0"+newSub0);
+                var diff = Math.abs(bright0-bright1);
+                newSub1 = change(subblock1, 1, E, diff);
+                newSub0 = subblock0;
+                //newSub0 = change(subblock0, 0);
+                console.log("newSub1"+newSub1);
+                console.log("newSub0"+newSub0);
                 bright0 = average(newSub0);
                 bright1 = average(newSub1);
-               // console.log("bright00"+bright0);
-               // console.log("bright11"+bright1);
-                newSub1 = change(subblock1, 1);
-                newSub0 = change(subblock0, 0);
+                if(bright0-bright1 > -E){
+                    var diff = Math.abs(bright0-bright1);
+                    newSub1 = change(subblock1, 1, E, diff);
+                    newSub0 = subblock0;
+                }
                 var s0 = 0;
                 var s1 = 0;
                 for (var x = 0; x < 8; x++) {
@@ -104,8 +112,11 @@ function doEncode(mask, pixelBlock, infBit, E) {
                         }
                     }
                 }
+
                 //return newPixelBlock;
             }
+            console.log("bright0"+bright0);
+            console.log("bright1"+bright1);
             break;
         case 1:
             var s0 = 0;
@@ -114,8 +125,19 @@ function doEncode(mask, pixelBlock, infBit, E) {
                 newPixelBlock = pixelBlock;
             }
             else if(bright0-bright1 < E) {
-                newSub1 = change(subblock1, 0);
-                newSub0 = change(subblock0, 1);
+                var diff = Math.abs(bright0-bright1);
+                //newSub1 = change(subblock1, 1);
+                newSub1 = subblock1;
+                newSub0 = change(subblock0, 0, E, diff);
+                console.log("newSub1"+newSub1);
+                console.log("newSub0"+newSub0);
+                bright0 = average(newSub0);
+                bright1 = average(newSub1);
+                if(bright0-bright1 < E){
+                    var diff = Math.abs(bright0-bright1);
+                    newSub1 = subblock1;
+                    newSub0 = change(subblock0, 0, E, diff);
+                }
                 for (var x = 0; x< 8; x++) {
                     for (var y = 0; y < 8; y++) {
                         var m = mask[x][y];
@@ -129,6 +151,8 @@ function doEncode(mask, pixelBlock, infBit, E) {
                     }
                 }
             }
+            console.log("bright0"+bright0);
+            console.log("bright1"+bright1);
             break;
     }
     console.log(newPixelBlock);
@@ -350,9 +374,7 @@ function  checkValue(mask, pixelBlock, E) {
     console.log("v: "+v);
     return v;
 }
-function getResult(str, len) {
-    return str.slice(0, bits.size(len));
-}
+
 function decode(img, color, seed, E, cb) {
     Jimp.read(img)
         .then(image=>{
@@ -407,7 +429,6 @@ function decode(img, color, seed, E, cb) {
                         }
                         p++;
                     }
-                    console.log("l: "+l);
                     if(l<32){
                         //console.log("i: "+ i);
                         //console.log("j: "+ j);
