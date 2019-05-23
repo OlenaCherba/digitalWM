@@ -9,8 +9,12 @@ html
     body
         div(class="container")
             div( class ="row")
-                div(class="float-left")
-                    img(src="images/logo.png" alt="l")
+                div(class="col-md-6")
+                    div(class="float-left")
+                        img(src="images/logo.png" alt="l")
+                div(class="col-md-6")
+                    div(class="float-right")
+                        a(class="btn btn-secondary m-4  d-inline-block" href="/") Главная
             h3(id="intro") Web-сервис для внедрения цифровых водяных знаков в  растровые изображения
             div(class="row")
                 div(class="col-md-6")
@@ -39,8 +43,8 @@ html
         div(class="container")
             div(class="row")
                 div(class="col-md-6")
-                    a(class="btn btn-secondary m-4  d-inline-block" href="/enc") Encode
-                    a(class="btn btn-secondary m-4  d-inline-block" href="/dec") Decode
+                    a(class="btn btn-secondary m-4  d-inline-block" href="/enc") Внедрить
+                    a(class="btn btn-secondary m-4  d-inline-block" href="/dec") Извлечь
                 div(id="resources" class="col-md-6 border")
                     h6 Полезный ресурс:
                     a(href="https://image.online-convert.com/ru/convert-to-png") Images to PNG

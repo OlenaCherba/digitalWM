@@ -5,9 +5,6 @@ function stringToBits(str) {
             var character = str[i];
             var number = str.charCodeAt(i);
             // Non-standard characters are treated as spaces
-            if(number > 255){
-                number = spaceCode;
-            }
             for(var j = 7; j >=0; j--){
                 bits[i * 8 + 7 - j]=(number>>j)&1;
             }

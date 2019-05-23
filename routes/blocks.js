@@ -17,32 +17,41 @@ function average(subblock) {
     return  Math.round(mean/subblock.length);
 }
 
-function change(block, id, E, diff) {
+function change(block, id, E, diff, rnd) {
     console.log("diff: "+diff);
     if(diff<=E){
-        diff=E+15;
+        diff=E+2;
     }
     var k1 = diff;
     var k2 = diff;
     var newBlock = [];
     if(id === 0){
         for(var i = 0; i < block.length;i++){
-            if(block[i]>255-k1){
-                newBlock[i] = block[i];
-            }
-            else newBlock[i] = block[i]+k1;
+            //if(i+3<block.length){
+                if(block[i]>=255-k1){
+                    newBlock[i] = block[i];
+                }
+                else newBlock[i] = block[i]+k1;
+           // } else if(i+1 <= block.length){
+           //     newBlock[i]=block[i];
+           // }
         }
     } else if(id === 1){
         for(var i = 0; i < block.length;i++){
-            if(block[i]>255-k2){
-                newBlock[i]=block[i];
-            } else newBlock[i] = block[i]+k2;
+            //if(i+3 < block.length){
+                if(block[i]<=k2){
+                    newBlock[i]=block[i];
+                } else newBlock[i] = block[i]-k2;
+            //}else if(i+1 <= block.length){
+               // newBlock[i]=block[i];
+            //}
         }
     }
     return newBlock;
 }
 function doEncode(mask, pixelBlock, infBit, E) {
    //var  block = pixelBlock;
+
     console.log("infBit="+infBit);
     var subblock0 = [];
     var subblock1 = [];
@@ -80,15 +89,14 @@ function doEncode(mask, pixelBlock, infBit, E) {
 
     switch (infBit) {
         case 0:
-
             if(bright0-bright1 <= -E){
                newPixelBlock = pixelBlock;
             }
             else if(bright0-bright1 > -E){
                 var diff = Math.abs(bright0-bright1);
-                newSub1 = change(subblock1, 1, E, diff);
-                newSub0 = subblock0;
-                //newSub0 = change(subblock0, 0);
+                newSub1 = change(subblock1, 0, E, diff);
+                //newSub0 = subblock0;
+                newSub0 = change(subblock0, 1, E, diff);
                 console.log("newSub1"+newSub1);
                 console.log("newSub0"+newSub0);
                 bright0 = average(newSub0);
@@ -126,8 +134,8 @@ function doEncode(mask, pixelBlock, infBit, E) {
             }
             else if(bright0-bright1 < E) {
                 var diff = Math.abs(bright0-bright1);
-                //newSub1 = change(subblock1, 1);
-                newSub1 = subblock1;
+                newSub1 = change(subblock1, 1, E, diff);
+                //newSub1 = subblock1;
                 newSub0 = change(subblock0, 0, E, diff);
                 console.log("newSub1"+newSub1);
                 console.log("newSub0"+newSub0);
