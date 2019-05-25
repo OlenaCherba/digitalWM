@@ -1,6 +1,5 @@
 var Jimp = require('jimp');
 var pathDownload = 'public/download/';
-var decTobin = require('decimal-to-any');
 var fs = require('fs');
 
 function stringToBits(str) {
@@ -66,7 +65,7 @@ function size(length){
     l += length.charCodeAt(0) << 32;
     return l;
 }
-function encode(img, msg, color, filename) {
+function encode(img, msg, color, filename, cb) {
 
     Jimp.read(img)
         .then(image => {
@@ -141,7 +140,7 @@ function encode(img, msg, color, filename) {
                 if(err) throw err;
                 console.log("success encoded");
             });
-            console.log(decode(file, color));
+            cb();
             // Do stuff with the image.
         })
         .catch(err => {
@@ -149,7 +148,7 @@ function encode(img, msg, color, filename) {
         });
 }
 
-function decode(img, color){
+function decode(img, color, cb){
     Jimp.read(img)
         .then(image=>{
             var resultString='';
@@ -198,6 +197,7 @@ function decode(img, color){
                 if(err) throw err;
                 console.log("success");
             });
+            cb(resultString);
         })
         .catch(err=>{
             throw err;

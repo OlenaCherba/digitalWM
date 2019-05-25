@@ -14,6 +14,15 @@ block content
                         input(type = "file" name ="image")
                     div(class = "form-group")
                 div(class="col-md-6")
+                    p Выберите алгоритм шифрования
+                        div(class="form-group")
+                            div(class="row")
+                                div(class = "col-md-6")
+                                    input(id="lsb" type="radio" name="alg" value="lsb")
+                                    label(for="lsb") LSB
+                                div(class = "col-md-6")
+                                    input(id="block" type="radio" name="alg" value="block")
+                                    label(for="block") Blocks
                     p Выберите цветовой канал для формирования стегоключа
                     div(class="form-group")
                         div(class="row")

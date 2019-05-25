@@ -172,10 +172,11 @@ function doEncode(mask, pixelBlock, infBit, E) {
     console.log(newPixelBlock);
     return newPixelBlock;
 }
-function encode(img, msg, color, seed, E, filename, cb) {
+function encode(img, msg, color, seed, filename, cb) {
     Jimp.read(img)
         .then(image=>{
             //var resImg = new Jimp(image.getWidth(), image.getHeight());
+            var E = 12;
             var lengthMsg = bits.createBitsForTextLength(msg);
             msg = bits.stringToBits(msg);
             var Ebits= bits.stringToBits(E);
@@ -390,9 +391,10 @@ function  checkValue(mask, pixelBlock, E) {
     return v;
 }
 
-function decode(img, color, seed, E, cb) {
+function decode(img, color, seed, cb) {
     Jimp.read(img)
         .then(image=>{
+            var E = 12;
             var resultString='';
             var stegotext = [];
             var length = [];
@@ -476,8 +478,6 @@ function decode(img, color, seed, E, cb) {
                 if(err) throw err;
                 console.log("success");
             });
-
-            //return resultString.slice(0, bits.size(length));
             cb(resultString);
 
 

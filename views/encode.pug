@@ -21,8 +21,16 @@ block content
                         input(type = "file" name ="image")
                     div(class = "form-group")
                 div(class="col-md-6")
-                    p Выберите цветовой канал для формирования стегоключа
+                    p Выберите алгоритм шифрования
                     div(class="form-group")
+                        div(class="row")
+                            div(class = "col-md-6")
+                                input(id="lsb" type="radio" name="alg" value="lsb")
+                                label(for="lsb") LSB
+                            div(class = "col-md-6")
+                                input(id="block" type="radio" name="alg" value="block")
+                                label(for="block") Blocks
+                    p Выберите цветовой канал для формирования стегоключа
                         div(class="row")
                             div(class = "col-md-4")
                                 input(id="red" type="radio" name="color" value="0")
@@ -33,12 +41,12 @@ block content
                             div(class = "col-md-4")
                                 input(id="blue" type="radio" name="color" value="2")
                                 label(class="blue" for="blue") "B"
-                        p Введите значения параметров, необходимых для создания маски(seed) и определения алгоритма внедрения(E)
+                        p Введите значения параметров, необходимых для создания маски(seed)
                         div(class="row")
                             div(class = "col-md-6")
                                 label(for="seed") Seed:
                                 input(id="seed" type = "number" name="seed" value="0" min="0" max="20" step="1")
-                            div(class = "col-md-6")
+                            //div(class = "col-md-6")
                                 label(for="E") E:
                                 input(id="E" type = "number" name="E" value="0" min="0" max="20" step="1")
             div(class="form-group text-center")

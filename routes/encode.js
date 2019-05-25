@@ -2,7 +2,7 @@ var express = require('express');
 var router = express.Router();
 var multer = require('multer');
 var fs = require('fs');
-var lsb = require('./lsbPast');
+var lsb = require('./lsb');
 var blocks = require('./blocks');
 var bodyParser = require('body-parser');
 var Jimp = require('jimp');
@@ -44,13 +44,10 @@ router.get('/', function (req, res) {
     res.render('encode.pug');
 });
 
-var img = '';
-//var imgData = Buffer.alloc(211021);
-//var encodeImg = Buffer.alloc(211021);
 router.post('/', urlencodedParser,  upload.fields([{name: 'text', maxCount: 1}, {name: 'image', maxCount: 1}]), function (req, res) {
-
+    var img = '';
+    var alg = req.body.alg;
     var seed = req.body.seed;
-    var E = req.body.E;
     var key = req.body.color;
     if (!req.files.image) {
         res.status(401).json({error: 'Please provide an image'});
@@ -72,26 +69,36 @@ router.post('/', urlencodedParser,  upload.fields([{name: 'text', maxCount: 1}, 
         msg = req.body.messages;
         doEncode(msg);
     }
-    /*if (req.body.color === '0') {
-        key = 0;
-    } else if (req.body.color === '1') {
-        key = 1;
-    } else if (req.body.color === '2') {
-        key = 2;
-    }*/
 
-    //lsb.encode(img, msg, key, req.file.filename);
     function doEncode(msg){
-        blocks.encode(img, msg, parseInt(key), parseInt(seed), parseInt(E), req.files['image'][0].filename, function () {
-            var fileName = req.files['image'][0].filename;
-            res.render('encode.pug', {Image:fileName});
-            fs.unlink(pathUpload+req.files['image'][0].filename, (err)=>{
-                if(err) throw err;
+        if(alg === "block"){
+            blocks.encode(img, msg, parseInt(key), parseInt(seed), req.files['image'][0].filename, function () {
+                var fileName = req.files['image'][0].filename;
+                res.render('encode.pug', {Image:fileName});
+                fs.unlink(pathUpload+req.files['image'][0].filename, (err)=>{
+                    if(err) throw err;
+                });
+                if(req.files.text){
+                    fs.unlink(pathUpload+req.files['text'][0].filename, (err)=>{
+                        if(err) throw err;
+                    });
+                }
             });
-            fs.unlink(pathUpload+req.files['text'][0].filename, (err)=>{
-                if(err) throw err;
+        }
+        else if(alg === "lsb"){
+            lsb.encode(img, msg, parseInt(key), req.files['image'][0].filename, function () {
+                var fileName = req.files['image'][0].filename;
+                res.render('encode.pug', {Image:fileName});
+                fs.unlink(pathUpload+req.files['image'][0].filename, (err)=>{
+                    if(err) throw err;
+                });
+                if(req.files.text){
+                    fs.unlink(pathUpload+req.files['text'][0].filename, (err)=>{
+                        if(err) throw err;
+                    });
+                }
             });
-        });
+        }
     }
 
 });
