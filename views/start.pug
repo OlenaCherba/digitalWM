@@ -6,6 +6,7 @@ html
         link(rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous")
         link(rel="stylesheet" href="https://use.fontawesome.com/releases/v5.8.2/css/all.css" integrity="sha384-oS3vJWv+0UjzBfQzYUhtDYW+Pj2yciDJxpsK1OYPAYjqT085Qq/1cq5FLXAZQ7Ay" crossorigin="anonymous")
         script(type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1/jquery.min.js")
+        script(src="/javascripts/get.js")
     body
         div(class="container")
             div( class ="row")
@@ -44,10 +45,12 @@ html
             div(class="row")
                 div(class="col-md-6")
                     a(class="btn btn-secondary m-4  d-inline-block" href="/enc") Внедрить
+                    //button(class="btn btn-secondary" id="btnEncode") Bнедрить
+                    //button(class="btn btn-secondary"  id="btnDecode") Извлечь
                     a(class="btn btn-secondary m-4  d-inline-block" href="/dec") Извлечь
                 div(id="resources" class="col-md-6 border")
                     h6 Полезный ресурс:
                     a(href="https://image.online-convert.com/ru/convert-to-png") Images to PNG
                     p Конвертация изображений любого формата в PNG
-
+        //div(id="encoder" class = "container")
     block content

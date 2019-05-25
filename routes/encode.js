@@ -9,6 +9,7 @@ var Jimp = require('jimp');
 
 //var base64ToImage = require('base64-to-image');
 var pathDownload = 'public/download/';
+var pathUpload = 'public/upload/';
 
 var urlencodedParser = bodyParser.urlencoded({
     extended: false
@@ -23,8 +24,9 @@ var storage = multer.diskStorage({
     }
 });
 
+//|| file.mimetype === 'image/tiff'
 var fileFilter = function (req, file, cb) {
-    if(file.mimetype === 'image/png' || file.mimetype === 'image/bmp' || file.mimetype === 'image/tiff'){
+    if(file.mimetype === 'image/png' || file.mimetype === 'image/bmp'  || file.mimetype ==='text/plain'){
         cb(null, true);
     }
     else {
@@ -45,35 +47,53 @@ router.get('/', function (req, res) {
 var img = '';
 //var imgData = Buffer.alloc(211021);
 //var encodeImg = Buffer.alloc(211021);
-router.post('/', urlencodedParser, upload.single('image'), function (req, res) {
-    var msg = req.body.messages;
+router.post('/', urlencodedParser,  upload.fields([{name: 'text', maxCount: 1}, {name: 'image', maxCount: 1}]), function (req, res) {
+
     var seed = req.body.seed;
     var E = req.body.E;
-    var key = 0;
-    if (req.body.color === '0') {
+    var key = req.body.color;
+    if (!req.files.image) {
+        res.status(401).json({error: 'Please provide an image'});
+    }
+    console.log(req.file);
+    img = req.files['image'][0].destination + req.files['image'][0].filename;
+    console.log(img);
+    var msg = '';
+    if(req.files.text){
+        fs.readFile(pathUpload+req.files['text'][0].filename, function (err, data) {
+            if(err){
+                throw  err;
+            }
+            msg = data.toString();
+            doEncode(msg);
+        });
+
+    } else if(req.body.messages) {
+        msg = req.body.messages;
+        doEncode(msg);
+    }
+    /*if (req.body.color === '0') {
         key = 0;
     } else if (req.body.color === '1') {
         key = 1;
     } else if (req.body.color === '2') {
         key = 2;
-    }
-    if (!req.file) {
-        res.status(401).json({error: 'Please provide an image'});
-    }
-    console.log(req.file);
-    img = req.file.destination + req.file.filename;
-    console.log(img);
+    }*/
 
     //lsb.encode(img, msg, key, req.file.filename);
-    blocks.encode(img, msg, key, parseInt(seed), parseInt(E), req.file.filename, function () {
-        var fileName = req.file.filename;
-        res.render('encode.pug', {Image:fileName});
-    });
+    function doEncode(msg){
+        blocks.encode(img, msg, parseInt(key), parseInt(seed), parseInt(E), req.files['image'][0].filename, function () {
+            var fileName = req.files['image'][0].filename;
+            res.render('encode.pug', {Image:fileName});
+            fs.unlink(pathUpload+req.files['image'][0].filename, (err)=>{
+                if(err) throw err;
+            });
+            fs.unlink(pathUpload+req.files['text'][0].filename, (err)=>{
+                if(err) throw err;
+            });
+        });
+    }
 
 });
 
 module.exports = router;
-
-
-
-

@@ -5,10 +5,6 @@ var bits = require('./bits');
 var random = require('random');
 var seedrandom = require('seedrandom');
 
-function koef (k) {
-    k+=8;
-    return k;
-}
 function average(subblock) {
     var mean = 0;
     for(var i = 0; i < subblock.length; i++){
@@ -182,6 +178,7 @@ function encode(img, msg, color, seed, E, filename, cb) {
             //var resImg = new Jimp(image.getWidth(), image.getHeight());
             var lengthMsg = bits.createBitsForTextLength(msg);
             msg = bits.stringToBits(msg);
+            var Ebits= bits.stringToBits(E);
             console.log("msg: "+msg);
             var iN = 0;
             var jN = 0;
