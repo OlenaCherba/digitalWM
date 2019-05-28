@@ -39,12 +39,14 @@ var upload = multer({
     fileFilter: fileFilter
 });
 
-router.get('/', function (req, res) {
+router.get('/', urlencodedParser, function (req, res) {
     console.log("Encode page!");
-    res.render('encode.pug');
+    res.render('start.pug');
+    //res.end(req.body);
 });
 
 router.post('/', urlencodedParser,  upload.fields([{name: 'text', maxCount: 1}, {name: 'image', maxCount: 1}]), function (req, res) {
+    console.log("Encode page!");
     var img = '';
     var alg = req.body.alg;
     var seed = req.body.seed;
@@ -74,7 +76,7 @@ router.post('/', urlencodedParser,  upload.fields([{name: 'text', maxCount: 1}, 
         if(alg === "block"){
             blocks.encode(img, msg, parseInt(key), parseInt(seed), req.files['image'][0].filename, function () {
                 var fileName = req.files['image'][0].filename;
-                res.render('encode.pug', {Image:fileName});
+                res.render('start.pug', {Image:fileName});
                 fs.unlink(pathUpload+req.files['image'][0].filename, (err)=>{
                     if(err) throw err;
                 });
@@ -88,7 +90,7 @@ router.post('/', urlencodedParser,  upload.fields([{name: 'text', maxCount: 1}, 
         else if(alg === "lsb"){
             lsb.encode(img, msg, parseInt(key), req.files['image'][0].filename, function () {
                 var fileName = req.files['image'][0].filename;
-                res.render('encode.pug', {Image:fileName});
+                res.render('start.pug', {Image:fileName});
                 fs.unlink(pathUpload+req.files['image'][0].filename, (err)=>{
                     if(err) throw err;
                 });

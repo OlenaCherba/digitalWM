@@ -34,7 +34,7 @@ var upload = multer({
 });
 router.get('/', function (req, res) {
     console.log("Decode page!");
-    res.render('decode');
+    res.render('start.pug');
 });
 
 router.post('/',urlencodedParser, upload.single('image'), function (req, res) {
@@ -53,13 +53,13 @@ router.post('/',urlencodedParser, upload.single('image'), function (req, res) {
     if(alg === "block"){
         bloks.decode(img, parseInt(key), parseInt(seed), function (cb) {
             console.log("text: "+cb);
-            res.render('decode.pug', {Text: cb});
+            res.render('start.pug', {Text: cb});
         });
     }
     else if(alg === "lsb"){
         lsb.decode(img, parseInt(key),function (cb) {
             console.log("text: "+cb);
-            res.render('decode.pug', {Text: cb});
+            res.render('start.pug', {Text: cb});
         });
     }
 
