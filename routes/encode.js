@@ -1,6 +1,5 @@
 var express = require('express');
 var router = express.Router();
-var multer = require('multer');
 var fs = require('fs');
 var lsb = require('./lsb');
 var blocks = require('./blocks');
@@ -15,43 +14,68 @@ var urlencodedParser = bodyParser.urlencoded({
     extended: false
 });
 
-var storage = multer.diskStorage({
-    destination : function (req, res, cb) {
-        cb(null, 'public/upload/')
-    },
-    filename: function (req, file, cb) {
-        cb(null, Date.now()+file.originalname)
-    }
-});
-
-//|| file.mimetype === 'image/tiff'
-var fileFilter = function (req, file, cb) {
-    if(file.mimetype === 'image/png' || file.mimetype === 'image/bmp'  || file.mimetype ==='text/plain'){
-        cb(null, true);
-    }
-    else {
-        cb(new Error('Only png, bmp, tiff are allowed'), false);
-    }
-};
-
-var upload = multer({
-    storage: storage,
-    fileFilter: fileFilter
-});
-
 router.get('/', urlencodedParser, function (req, res) {
-    console.log("Encode page!");
-    res.render('start.pug');
+    //var msg = req.query.msg;
+    var textFileName = req.query.textFile;
+    var imageName = req.query.image;
+    var alg = req.query.alg;
+    var color = req.query.color;
+    var seed = req.query.seed;
+
+    if (!imageName) {
+        res.status(401).json({error: 'Please provide an image'});
+    }
+    var imagePath = pathUpload + imageName;
+    var msg = '';var imagePath = pathUpload + imageName;
+    if(textFileName){
+        fs.readFile(pathUpload+textFileName, function (err, data) {
+            if(err){
+                throw  err;
+            }
+            msg = data.toString();
+            console.log(msg);
+            doEncode(msg);
+        });
+
+    } else if(req.query.msg) {
+        msg = req.query.msg;
+        doEncode(msg);
+    }
+
+    function doEncode(msg){
+        if(alg === "block"){
+            blocks.encode(imagePath, msg, parseInt(color), parseInt(seed), imageName, function () {
+                res.send(JSON.stringify({"imageResult":imageName}));
+                fs.unlink(imagePath, (err)=>{
+                    if(err) throw err;
+                });
+                if(textFileName){
+                    fs.unlink(pathUpload+textFileName, (err)=>{
+                        if(err) throw err;
+                    });
+                }
+            });
+        }
+        else if(alg === "lsb"){
+            lsb.encode(imagePath, msg, parseInt(color), imageName, function () {
+                res.send(JSON.stringify({"imageResult":imageName}));
+                fs.unlink(imagePath, (err)=>{
+                    if(err) throw err;
+                });
+                if(textFileName){
+                    fs.unlink(pathUpload+textFileName, (err)=>{
+                        if(err) throw err;
+                    });
+                }
+            });
+        }
+    }
     //res.end(req.body);
 });
 
-router.post('/', urlencodedParser,  upload.fields([{name: 'text', maxCount: 1}, {name: 'image', maxCount: 1}]), function (req, res) {
-    console.log("Encode page!");
-    var img = '';
-    var alg = req.body.alg;
-    var seed = req.body.seed;
-    var key = req.body.color;
-    if (!req.files.image) {
+router.post('/', function (req, res) {
+
+    /*if (!req.files.image) {
         res.status(401).json({error: 'Please provide an image'});
     }
     console.log(req.file);
@@ -76,7 +100,8 @@ router.post('/', urlencodedParser,  upload.fields([{name: 'text', maxCount: 1}, 
         if(alg === "block"){
             blocks.encode(img, msg, parseInt(key), parseInt(seed), req.files['image'][0].filename, function () {
                 var fileName = req.files['image'][0].filename;
-                res.render('start.pug', {Image:fileName});
+                //res.render('start.pug', {Image:fileName});
+                res.send(seed);
                 fs.unlink(pathUpload+req.files['image'][0].filename, (err)=>{
                     if(err) throw err;
                 });
@@ -101,7 +126,7 @@ router.post('/', urlencodedParser,  upload.fields([{name: 'text', maxCount: 1}, 
                 }
             });
         }
-    }
+    }*/
 
 });
 

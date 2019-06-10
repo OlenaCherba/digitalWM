@@ -5,8 +5,7 @@ html
         link(rel="stylesheet", href="/stylesheets/style.css")
         link(rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous")
         link(rel="stylesheet" href="https://use.fontawesome.com/releases/v5.8.2/css/all.css" integrity="sha384-oS3vJWv+0UjzBfQzYUhtDYW+Pj2yciDJxpsK1OYPAYjqT085Qq/1cq5FLXAZQ7Ay" crossorigin="anonymous")
-        script(type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1/jquery.min.js")
-        script(src="/javascripts/main.js")
+
     body
         div(class="container")
             div( class ="row")
@@ -16,7 +15,7 @@ html
                 div(class="col-md-6")
                     div(class="float-right")
                         a(class="btn btn-secondary m-4  d-inline-block" href="/") Главная
-            h3(id="intro") Web-сервис для внедрения цифровых водяных знаков в  растровые изображения
+            h3(id="intro") Web-сервис для встраивания цифровых водяных знаков в  растровые изображения
             div(class="row")
                 div(class="col-md-6")
                     div(class="row intro")
@@ -45,30 +44,76 @@ html
             div(class="row")
                 div(class="col-md-6")
                     //a(class="btn btn-secondary m-4  d-inline-block" href="/enc") Внедрить
-                    button(class="btn btn-secondary m-4  d-inline-block" id="btnEncode") Bнедрить
+                    button(class="btn btn-secondary m-4  d-inline-block" id="btnEncode") Bстроить
                     button(class="btn btn-secondary m-4  d-inline-block"  id="btnDecode") Извлечь
                     //a(class="btn btn-secondary m-4  d-inline-block" href="/dec") Извлечь
                 div(id="resources" class="col-md-6 border")
                     h6 Полезный ресурс:
                     a(href="https://image.online-convert.com/ru/convert-to-png") Images to PNG
                     p Конвертация изображений любого формата в PNG
-        div(id="encoder" class = "container")
-            div(id ="encodeContainer" class="container border  form")
-                form(id="encodeForm" action="/enc" method="post" enctype = "multipart/form-data")
-                    div(class="row")
-                        div(class="col-md-6")
-                            p Введите секретную информацию в текстовом поле
-                            div(class = "form-group")
-                                input(id="message" type = "text" name="messages" size="40")
-                            p Загрузите файл с информацией
-                            div(class = "form-group")
-                                input(id="textFile" type = "file" name ="text")
-                            p Загрузите изображение
-                            div(class = "form-group")
-                                input(id="image" type = "file" name ="image")
-                            div(class = "form-group")
-                        div(class="col-md-6")
-                            p Выберите алгоритм шифрования
+        div(id ="encodeContainer" class="container border  form")
+            form(id="encodeForm" action="/enc" method="post" enctype = "multipart/form-data")
+                //div(class="row")
+                   div(class="col-md-6")
+                       p Введите секретную информацию в текстовом поле
+                       div(class = "form-group")
+                           input(id="message" type = "text" name="message" size="40")
+                       p Загрузите файл с информацией
+                       div(class = "form-group")
+                           input(id="textFile" type = "file" name ="textFile")
+                       p Загрузите изображение
+                       div(class = "form-group")
+                           input(id="image" type = "file" name ="image")
+                       div(class = "form-group")
+                   div(class="col-md-6")
+                       p Выберите алгоритм шифрования
+                       div(class="form-group")
+                           div(class="row")
+                               div(class = "col-md-6")
+                                   input(id="lsb" type="radio" name="alg" value="lsb")
+                                   label(for="lsb") LSB
+                               div(class = "col-md-6")
+                                   input(id="block" type="radio" name="alg" value="block")
+                                   label(for="block") Blocks
+                       p Выберите цветовой канал для формирования стегоключа
+                           div(class="row")
+                               div(class = "col-md-4")
+                                   input(id="red" type="radio" name="color" value="0")
+                                   label(class="red" for="red") "R"
+                               div(class = "col-md-4")
+                                   input(id="green" type="radio" name="color" value="1")
+                                   label(class="green" for="green") "G"
+                               div(class = "col-md-4")
+                                   input(id="blue" type="radio" name="color" value="2")
+                                   label(class="blue" for="blue") "B"
+                           p Введите значения параметров, необходимых для создания маски(seed)
+                           div(class="row")
+                               div(class = "col-md-6")
+                                   label(for="seed") Seed:
+                                   input(id="seed" type = "number" name="seed" value="0" min="0" max="20" step="1")
+                               //div(class = "col-md-6")
+                                   label(for="E") E:
+                                   input(id="E" type = "number" name="E" value="0" min="0" max="20" step="1")
+                //div(class="form-group text-center")
+                   div(class="col-12")
+                       button#submitEncode(class="btn btn-secondary" type="submit" name = "submit") Загрузить
+                           i(class="fas fa-upload")
+            //div(class="text-center")
+                div(class="row")
+                    div(id="imageBlock" class="col-12")
+                    div(id="download" class="col-12")
+                    //a(class="btn btn-success" href="/download/" + Image download) Cкачать
+                        i(class="fas fa-download")
+        div(id ="decodeContainer" class="container border form")
+            form(id="decodeForm" action="/dec" method="post" enctype = "multipart/form-data")
+                //div(class="row")
+                    div(class="col-md-6")
+                        p Загрузите изображение для извлечения ЦВЗ
+                        div(class = "form-group")
+                            input(type = "file" name ="image")
+                        div(class = "form-group")
+                    div(class="col-md-6")
+                        p Выберите алгоритм шифрования
                             div(class="form-group")
                                 div(class="row")
                                     div(class = "col-md-6")
@@ -77,80 +122,32 @@ html
                                     div(class = "col-md-6")
                                         input(id="block" type="radio" name="alg" value="block")
                                         label(for="block") Blocks
-                            p Выберите цветовой канал для формирования стегоключа
-                                div(class="row")
-                                    div(class = "col-md-4")
-                                        input(id="red" type="radio" name="color" value="0")
-                                        label(class="red" for="red") "R"
-                                    div(class = "col-md-4")
-                                        input(id="green" type="radio" name="color" value="1")
-                                        label(class="green" for="green") "G"
-                                    div(class = "col-md-4")
-                                        input(id="blue" type="radio" name="color" value="2")
-                                        label(class="blue" for="blue") "B"
-                                p Введите значения параметров, необходимых для создания маски(seed)
-                                div(class="row")
-                                    div(class = "col-md-6")
-                                        label(for="seed") Seed:
+                        p Выберите цветовой канал для формирования стегоключа
+                        div(class="form-group")
+                            div(class="row")
+                                div(class = "col-md-4")
+                                    input(id="red" type="radio" name="color" value="0")
+                                    label(class="red" for="red") "R"
+                                div(class = "col-md-4")
+                                    input(id="green" type="radio" name="color" value="1")
+                                    label(class="green" for="green") "G"
+                                div(class = "col-md-4")
+                                    input(id="blue" type="radio" name="color" value="2")
+                                    label(class="blue" for="blue") "B"
+                            p Введите значения параметров, необходимых для создания маски(seed) и определения алгоритма внедрения(E)
+                            div(class="row")
+                                div(class = "col-md-6")
+                                    label(for="seed") Seed:
                                         input(id="seed" type = "number" name="seed" value="0" min="0" max="20" step="1")
-                                    //div(class = "col-md-6")
-                                        label(for="E") E:
-                                        input(id="E" type = "number" name="E" value="0" min="0" max="20" step="1")
-                    div(class="form-group text-center")
-                        div(class="col-12")
-                            button(id="submitEncode" class="btn btn-secondary" type = "submit" name = "submit") Загрузить
-                                i(class="fas fa-upload")
-                        div(id="imageBlock" class="col-12")
-                                    if Image
-                                        img(id="resultImage" class="img-thumbnail" src="download/" + Image alt='enc')
-            div(class="text-center")
-                div(class="row")
+                                //div(class = "col-md-6")
+                                    label(for="E") E:
+                                    input(id="E" type = 'text' name="E" size="10")
+                //div(class="form-group text-center")
                     div(class="col-12")
-                        a(class="btn btn-success" href="/download/" + Image download) Cкачать
-                            i(class="fas fa-download")
-        div(id="decoder" class = "container")
-            div(class="container border form")
-                form(action="/dec" method="post" enctype = "multipart/form-data")
-                    div(class="row")
-                        div(class="col-md-6")
-                            p Загрузите изображение для извлечения ЦВЗ
-                            div(class = "form-group")
-                                input(type = "file" name ="image")
-                            div(class = "form-group")
-                        div(class="col-md-6")
-                            p Выберите алгоритм шифрования
-                                div(class="form-group")
-                                    div(class="row")
-                                        div(class = "col-md-6")
-                                            input(id="lsb" type="radio" name="alg" value="lsb")
-                                            label(for="lsb") LSB
-                                        div(class = "col-md-6")
-                                            input(id="block" type="radio" name="alg" value="block")
-                                            label(for="block") Blocks
-                            p Выберите цветовой канал для формирования стегоключа
-                            div(class="form-group")
-                                div(class="row")
-                                    div(class = "col-md-4")
-                                        input(id="red" type="radio" name="color" value="0")
-                                        label(class="red" for="red") "R"
-                                    div(class = "col-md-4")
-                                        input(id="green" type="radio" name="color" value="1")
-                                        label(class="green" for="green") "G"
-                                    div(class = "col-md-4")
-                                        input(id="blue" type="radio" name="color" value="2")
-                                        label(class="blue" for="blue") "B"
-                                p Введите значения параметров, необходимых для создания маски(seed) и определения алгоритма внедрения(E)
-                                div(class="row")
-                                    div(class = "col-md-6")
-                                        label(for="seed") Seed:
-                                        input(id="seed" type = 'text' name="seed" size="10")
-                                    div(class = "col-md-6")
-                                        label(for="E") E:
-                                        input(id="E" type = 'text' name="E" size="10")
-                    div(class="form-group text-center")
-                        div(class="col-12")
-                            button(id="submitDecode" class="btn btn-secondary" type = "submit" name = "submit") Загрузить
-                                i(class="fas fa-upload")
-                        div(class="col-12")
-                            p #{Text}
-    //block content
+                        button(id="submitDecode" class="btn btn-secondary" type = "submit" name = "submit") Загрузить
+                            i(class="fas fa-upload")
+                //div(id="resultDecode" class="col-12")
+
+script(src="http://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js")
+script(src="http://cdnjs.cloudflare.com/ajax/libs/jquery.form/3.51/jquery.form.min.js")
+script(src="/javascripts/main.js")

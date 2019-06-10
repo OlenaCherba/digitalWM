@@ -5,7 +5,8 @@ var fs = require('fs');
 var lsb = require('./lsb');
 var bloks = require('./blocks');
 var bodyParser = require('body-parser');
-
+var pathDownload = 'public/download/';
+var pathUpload = 'public/upload/';
 var urlencodedParser = bodyParser.urlencoded({
     extended: false
 });
@@ -32,19 +33,42 @@ var upload = multer({
     storage: storage,
     fileFilter: fileFilter
 });
+
+function setData(data){
+    var jsn = {"seedTest":13};
+    return jsn;
+}
 router.get('/', function (req, res) {
     console.log("Decode page!");
-    res.render('start.pug');
+    var imageName = req.query.image;
+    var alg = req.query.alg;
+    var color = req.query.color;
+    var seed = req.query.seed;
+    if (!imageName) {
+        res.status(401).json({error: 'Please provide an image'});
+    }
+    var imagePath = pathUpload + imageName;
+    if(alg === "block"){
+        bloks.decode(imagePath, parseInt(color), parseInt(seed), function (cb) {
+            console.log("text: "+cb);
+            res.send(JSON.stringify({"textResult":cb}));
+        });
+    }
+    else if(alg === "lsb"){
+        lsb.decode(imagePath, parseInt(color),function (cb) {
+            console.log("text: "+cb);
+            res.send(JSON.stringify({"textResult":cb}));
+        });
+    }
 });
 
 router.post('/',urlencodedParser, upload.single('image'), function (req, res) {
     var img ='';
     var text = '';
-    console.log(req.file);
+    //console.log(req.file);
     var alg = req.body.alg;
     var seed = req.body.seed;
     var key = req.body.color;
-
     if (!req.file) {
         res.status(401).json({error: 'Please provide an image'});
     }
@@ -62,9 +86,6 @@ router.post('/',urlencodedParser, upload.single('image'), function (req, res) {
             res.render('start.pug', {Text: cb});
         });
     }
-
-
-
 });
 
 module.exports = router;

@@ -2,7 +2,10 @@ body {
   padding: 50px;
   font: 14px "Lucida Grande", Helvetica, Arial, sans-serif;
 }
-
+.center{
+  display: flex;
+  align-items: center
+}
 a:hover{
   color: aliceblue;
   text-decoration: underline;

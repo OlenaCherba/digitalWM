@@ -176,10 +176,9 @@ function encode(img, msg, color, seed, filename, cb) {
     Jimp.read(img)
         .then(image=>{
             //var resImg = new Jimp(image.getWidth(), image.getHeight());
-            var E = 12;
+            var E = 6;
             var lengthMsg = bits.createBitsForTextLength(msg);
             msg = bits.stringToBits(msg);
-            var Ebits= bits.stringToBits(E);
             console.log("msg: "+msg);
             var iN = 0;
             var jN = 0;
@@ -334,7 +333,6 @@ function encode(img, msg, color, seed, filename, cb) {
             }
 
             var file = pathDownload + filename;
-            console.log(file);
             image.write(file, function (err) {
                 if(err) throw err;
                 console.log("success encoded");
@@ -394,7 +392,7 @@ function  checkValue(mask, pixelBlock, E) {
 function decode(img, color, seed, cb) {
     Jimp.read(img)
         .then(image=>{
-            var E = 12;
+            var E = 6;
             var resultString='';
             var stegotext = [];
             var length = [];
