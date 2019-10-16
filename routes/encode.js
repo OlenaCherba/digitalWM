@@ -100,7 +100,7 @@ router.post('/', function (req, res) {
         if(alg === "block"){
             blocks.encode(img, msg, parseInt(key), parseInt(seed), req.files['image'][0].filename, function () {
                 var fileName = req.files['image'][0].filename;
-                //res.render('start.pug', {Image:fileName});
+                //res.render('mainpage.pug', {Image:fileName});
                 res.send(seed);
                 fs.unlink(pathUpload+req.files['image'][0].filename, (err)=>{
                     if(err) throw err;
@@ -115,7 +115,7 @@ router.post('/', function (req, res) {
         else if(alg === "lsb"){
             lsb.encode(img, msg, parseInt(key), req.files['image'][0].filename, function () {
                 var fileName = req.files['image'][0].filename;
-                res.render('start.pug', {Image:fileName});
+                res.render('mainpage.pug', {Image:fileName});
                 fs.unlink(pathUpload+req.files['image'][0].filename, (err)=>{
                     if(err) throw err;
                 });

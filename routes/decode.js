@@ -77,13 +77,13 @@ router.post('/',urlencodedParser, upload.single('image'), function (req, res) {
     if(alg === "block"){
         bloks.decode(img, parseInt(key), parseInt(seed), function (cb) {
             console.log("text: "+cb);
-            res.render('start.pug', {Text: cb});
+            res.render('mainpage.pug', {Text: cb});
         });
     }
     else if(alg === "lsb"){
         lsb.decode(img, parseInt(key),function (cb) {
             console.log("text: "+cb);
-            res.render('start.pug', {Text: cb});
+            res.render('mainpage.pug', {Text: cb});
         });
     }
 });

@@ -1,0 +1,21 @@
+extends layout.pug
+
+
+block content
+    h1 Input your username and password to log in
+
+    form(action="/" method="post")
+        div(class="form-group")
+            label(for="inputUsername") Login
+            input(type="text", class="form-control", id="inputUsername", placeholder="Username", name="username")
+        div(class="form-group")
+            label(for="inputPassword") Password
+            input(type="password", class="form-control", id="inputPassword" placeholder="Password", name="password")
+        div(class="form-group")
+            button(type="submit", class="btn btn-primary") Login
+    button(class="btn", name="sign_in")
+        a(href="/reg") Sign in
+
+
+    if login_error
+        div(class="alert alert-danger" role="alert") #{login_error}

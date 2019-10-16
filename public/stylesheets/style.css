@@ -1,5 +1,6 @@
 body {
   padding: 50px;
+  background-color: beige;
   font: 14px "Lucida Grande", Helvetica, Arial, sans-serif;
 }
 .center{
@@ -14,7 +15,8 @@ a:hover{
   color: aliceblue;
 }
 .form{
-  background-color: lavender;
+  padding:10px;
+  background-color: ghostwhite;
 }
 .red{
   color: lavender;
