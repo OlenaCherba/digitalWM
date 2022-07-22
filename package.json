@@ -19,7 +19,7 @@
     "decimal-to-any": "^1.0.5",
     "express": "~4.16.0",
     "express-session": "^1.17.0",
-    "file-type": "^11.0.0",
+    "file-type": "^16.5.4",
     "http-errors": "~1.6.2",
     "jimp": "^0.6.4",
     "lsb": "^0.1.0",
